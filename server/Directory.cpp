@@ -1,0 +1,14 @@
+//
+// Created by micho6 on 03.01.2021.
+//
+
+#include "Directory.h"
+
+#include "ServerExceptions.h"
+
+Directory::Directory(int fd, DIR *dir) : fd(fd), dir(dir) { }
+
+char* Directory::read()
+{
+    throw NotImplementedError();
+}
