@@ -10,5 +10,5 @@ Directory::Directory(int fd, DIR *dir) : descriptor(fd), dir(dir) { }
 
 char* Directory::read()
 {
-    throw NotImplementedError();
+    return ::readdir(this->dir)->d_name;
 }

@@ -1,7 +1,3 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #ifndef TIN_FILEMANAGER_H
 #define TIN_FILEMANAGER_H
 

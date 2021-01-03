@@ -14,7 +14,7 @@ public:
     void add(int fd)
     {
         std::lock_guard lockGuard(m);
-        files.insert(fd, files.end());
+        files.insert(files.end(), fd);
     }
 
     void remove(int fd)

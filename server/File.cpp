@@ -1,29 +1,25 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #include "File.h"
 
 #include "ServerExceptions.h"
 
 File::File(int fd, std::string  user) : descriptor(fd), user(std::move(user)) { }
 
-void File::read(char *buffer, int size) const
+int File::read(char *buffer, int size) const
 {
-    throw NotImplementedError();
+    return ::read(this->descriptor, buffer, size);
 }
 
-void File::write(const char *buffer, int size) const
+int File::write(const char *buffer, int size) const
 {
-    throw NotImplementedError();
+    return ::write(this->descriptor, buffer, size);
 }
 
-void File::lseek(int offset, int whence) const
+int File::lseek(int offset, int whence) const
 {
-    throw NotImplementedError();
+    return ::lseek(this->descriptor, offset, whence);
 }
 
-void File::fstat(struct stat *stat) const
+int File::fstat(struct stat *stat) const
 {
-    throw NotImplementedError();
+    return ::fstat(this->descriptor, stat);
 }

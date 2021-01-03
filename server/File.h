@@ -1,11 +1,8 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #ifndef TIN_FILE_H
 #define TIN_FILE_H
 
 #include <sys/stat.h>
+#include <unistd.h>
 #include <string>
 
 class File
@@ -13,10 +10,10 @@ class File
 public:
     File(int fd, std::string user);
 
-    void read(char* buffer, int size) const;
-    void write(const char* buffer, int size) const;
-    void lseek(int offset, int whence) const;
-    void fstat(struct stat* stat) const;
+    int read(char* buffer, int size) const;
+    int write(const char* buffer, int size) const;
+    int lseek(int offset, int whence) const;
+    int fstat(struct stat* stat) const;
 
     [[nodiscard]] inline int getFD() const { return descriptor; }
     [[nodiscard]] inline const std::string& getUser() const { return user; }
