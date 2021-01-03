@@ -6,7 +6,7 @@
 
 #include "ServerExceptions.h"
 
-Directory::Directory(int fd, DIR *dir) : fd(fd), dir(dir) { }
+Directory::Directory(int fd, DIR *dir) : descriptor(fd), dir(dir) { }
 
 char* Directory::read()
 {

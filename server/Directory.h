@@ -14,10 +14,10 @@ public:
 
     char* read();
 
-    [[nodiscard]] inline int getFD() const { return fd; }
+    [[nodiscard]] inline int getFD() const { return descriptor; }
 
 private:
-    int fd;
+    int descriptor;
     DIR* dir;
 };
 

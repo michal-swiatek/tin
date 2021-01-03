@@ -6,7 +6,7 @@
 
 #include "ServerExceptions.h"
 
-File::File(int fd, std::string  user) : fd(fd), user(std::move(user)) { }
+File::File(int fd, std::string  user) : descriptor(fd), user(std::move(user)) { }
 
 void File::read(char *buffer, int size) const
 {

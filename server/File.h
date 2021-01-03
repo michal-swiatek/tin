@@ -18,11 +18,11 @@ public:
     void lseek(int offset, int whence) const;
     void fstat(struct stat* stat) const;
 
-    [[nodiscard]] inline int getFD() const { return fd; }
+    [[nodiscard]] inline int getFD() const { return descriptor; }
     [[nodiscard]] inline const std::string& getUser() const { return user; }
 
 private:
-    int fd;
+    int descriptor;
     std::string user;
 };
 
