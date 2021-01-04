@@ -7,10 +7,9 @@
 #include <string>
 #include "FilesMonitor.h"
 
-class File
-{
+class File {
 public:
-    enum Flags{
+    enum Flags {
         READ_ONLY = O_RDONLY,
         WRITE_ONLY = O_WRONLY,
         READ_WRITE = O_RDWR,
@@ -19,18 +18,26 @@ public:
 
     File(const std::string &diskPath, const std::string &filePath, Flags flags, const std::string &user,
          FilesMonitor &filesMonitor);
+
     ~File();
 
-    int read(char* buffer, int size) const;
-    int write(const char* buffer, int size) const;
+    File(const File&) = delete;
+    File& operator=(const File&) = delete;
+
+    int read(char *buffer, int size) const;
+
+    int write(const char *buffer, int size) const;
+
     int lseek(int offset, int whence) const;
-    int fstat(struct stat* stat) const;
+
+    int fstat(struct stat *stat) const;
 
     [[nodiscard]] inline int getFD() const { return descriptor; }
-    [[nodiscard]] inline const std::string& getUser() const { return user; }
+
+    [[nodiscard]] inline const std::string &getUser() const { return user; }
 
 private:
-    FilesMonitor& filesMonitor;
+    FilesMonitor &filesMonitor;
     int descriptor;
     std::string user;
     std::string path;

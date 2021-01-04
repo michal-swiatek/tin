@@ -4,24 +4,20 @@
 #include <unordered_map>
 #include <mutex>
 
-class FilesMonitor
-{
+class FilesMonitor {
 public:
-    void add(const std::string& file, const std::string& user)
-    {
-        // TODO: co jak juz jest plik
+    void add(const std::string &file, const std::string &user) {
         std::lock_guard lockGuard(m);
-        files.insert({file, user});
+        try{
+            files.at(file);
+            // TODO: plik juz otwarty
+            throw std::exception();
+        }catch (std::out_of_range& e){
+            files.insert({file, user});
+        }
     }
 
-    std::string& find(const std::string& file)
-    {
-        std::lock_guard lockGuard(m);
-        return files.at(file);
-    }
-
-    void remove(const std::string& file)
-    {
+    void remove(const std::string &file) {
         std::lock_guard lockGuard(m);
         files.erase(file);
     }

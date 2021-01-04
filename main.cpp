@@ -22,10 +22,11 @@ int main() {
 //    std::cout<<directory.read()<<'\n';
 //    std::cout<<directory.read()<<'\n';
 //    std::cout<<directory.read()<<'\n';
-
+//
 //    std::string filePath = "/1.txt";
 //
 //    File file = FileManager::getInstance().getFile(filePath, File::Flags::READ_ONLY, user);
+//    File file2 = FileManager::getInstance().getFile(filePath, File::Flags::READ_ONLY, user);
 //
 ////    const char* buff = std::string("pie").c_str();
 //    char buff[3];

@@ -4,18 +4,19 @@
 #include <set>
 #include <mutex>
 
-class DirectoriesMonitor
-{
+class DirectoriesMonitor {
 public:
-    void add(const std::string& directory, const std::string& user)
-    {
-        // TODO: co jak juz jest dir
+    void add(const std::string &directory, const std::string &user) {
         std::lock_guard lockGuard(m);
-        directories.insert(std::make_pair(directory, user));
+        if(directories.find(std::make_pair(directory, user)) == directories.end()){
+            directories.insert(std::make_pair(directory, user));
+        }else{
+            // TODO: directory juz otwarte
+            throw std::exception();
+        }
     }
 
-    void remove(const std::string& directory, const std::string& user)
-    {
+    void remove(const std::string &directory, const std::string &user) {
         std::lock_guard lockGuard(m);
         directories.erase(std::make_pair(directory, user));
     }

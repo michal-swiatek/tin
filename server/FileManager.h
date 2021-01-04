@@ -22,11 +22,11 @@ public:
     void init();
     void end();
 
-    File getFile(const std::string &path, File::Flags flags, const std::string& user);
+    File* getFile(const std::string &path, File::Flags flags, const std::string& user);
 
     void unlinkFile(const std::string& path, const std::string& user);
 
-    Directory getDirectory(const std::string &path, const std::string& user);
+    Directory* getDirectory(const std::string &path, const std::string& user);
 
     //  Copying nor moving is not allowed in singleton class
     FileManager(const FileManager& other) = delete;
@@ -48,6 +48,7 @@ private:
 
     std::string diskPath;
     std::string filesOwnersFilePath;
+    std::string filesOwnersFileName;
 };
 
 #endif //TIN_FILEMANAGER_H

@@ -10,10 +10,10 @@ Directory::Directory(const std::string &diskPath, const std::string &dirPath, co
         : directoriesMonitor(directoriesMonitor), path(dirPath), user(user) {
     // TODO: obsluga bledow
     // nie ma directory
+    directoriesMonitor.add(path, user);
     std::string fullPath = diskPath + dirPath;
     dir = opendir(fullPath.c_str());
     descriptor = dirfd(dir);
-    directoriesMonitor.add(path, user);
 }
 
 Directory::~Directory() {
@@ -23,13 +23,14 @@ Directory::~Directory() {
     directoriesMonitor.remove(path, user);
 }
 
-char* Directory::read()
-{
-    dirent* d;
-    while((d = ::readdir(this->dir)) != nullptr){
-        if (d->d_name != std::string(".") && d->d_name != std::string("..")){
+char *Directory::read() {
+    dirent *d;
+    while ((d = ::readdir(this->dir)) != nullptr) {
+        if (d->d_name != std::string(".") && d->d_name != std::string("..")) {
             return d->d_name;
         }
     }
-    return nullptr;
+    // TODO: brak kolejnych pozycji
+    throw std::exception();
+    // return nullptr;
 }

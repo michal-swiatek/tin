@@ -8,9 +8,11 @@ File::File(const std::string &diskPath, const std::string &filePath, Flags flags
         : path(filePath), user(user), filesMonitor(filesMonitor), flags(flags) {
     // TODO: obsluga bledow
     // TODO: rozne tryby otwierania
+    // TODO: rzuc wyjatek jak juz jest taki plik
+    filesMonitor.add(filePath, user);
     std::string fullPath = diskPath + filePath;
     descriptor = open(fullPath.c_str(), flags);
-    filesMonitor.add(filePath, user);
+    throw
 }
 
 File::~File() {
@@ -20,24 +22,20 @@ File::~File() {
     filesMonitor.remove(path);
 }
 
-int File::read(char *buffer, int size) const
-{
+int File::read(char *buffer, int size) const {
     // TODO: co jak nie mozesz czytac
     return ::read(this->descriptor, buffer, size);
 }
 
-int File::write(const char *buffer, int size) const
-{
+int File::write(const char *buffer, int size) const {
     // TODO: co jak nie mozesz pisac
     return ::write(this->descriptor, buffer, size);
 }
 
-int File::lseek(int offset, int whence) const
-{
+int File::lseek(int offset, int whence) const {
     return ::lseek(this->descriptor, offset, whence);
 }
 
-int File::fstat(struct stat *stat) const
-{
+int File::fstat(struct stat *stat) const {
     return ::fstat(this->descriptor, stat);
 }
