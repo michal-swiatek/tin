@@ -1,31 +1,34 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #ifndef TIN_FILESMONITOR_H
 #define TIN_FILESMONITOR_H
 
-#include <set>
+#include <unordered_map>
 #include <mutex>
 
 class FilesMonitor
 {
 public:
-    void add(int fd)
+    void add(const std::string& file, const std::string& user)
     {
+        // TODO: co jak juz jest plik
         std::lock_guard lockGuard(m);
-        files.insert(files.end(), fd);
+        files.insert({file, user});
     }
 
-    void remove(int fd)
+    std::string& find(const std::string& file)
     {
         std::lock_guard lockGuard(m);
-        files.erase(fd);
+        return files.at(file);
+    }
+
+    void remove(const std::string& file)
+    {
+        std::lock_guard lockGuard(m);
+        files.erase(file);
     }
 
 private:
     std::mutex m;
-    std::set<int> files;
+    std::unordered_map<std::string, std::string> files;
 };
 
 #endif //TIN_FILESMONITOR_H

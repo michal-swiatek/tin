@@ -1,17 +1,39 @@
 #include <iostream>
 #include "server/FileManager.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 int main() {
     FileManager::getInstance().init();
-//    std::cout<<'\n'<<__FILE__;
 
-    std::string filePath = "/first";
-    Directory directory = FileManager::getInstance().openDirectory(filePath.c_str());
+//    std::string dirPath = "/";
+//    std::string user = "asia";
+//    Directory directory = FileManager::getInstance().getDirectory(dirPath, user);
+//
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
+//    std::cout<<directory.read()<<'\n';
 
-    std::cout<<directory.read()<<'\n';
-    std::cout<<directory.read()<<'\n';
-
-    FileManager::getInstance().closeDirectory(directory.getFD());
+//    std::string filePath = "/1.txt";
+//
+//    File file = FileManager::getInstance().getFile(filePath, File::Flags::READ_ONLY, user);
+//
+////    const char* buff = std::string("pie").c_str();
+//    char buff[3];
+//
+////    file.write(buff, 3);
+//    file.read(buff, 3);
+//
+//    std::cout<<buff<<'\n';
 
     FileManager::getInstance().end();
     return 0;

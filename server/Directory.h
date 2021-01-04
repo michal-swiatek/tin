@@ -3,11 +3,14 @@
 
 #include <dirent.h>
 #include <string>
+#include "DirectoriesMonitor.h"
 
 class Directory
 {
 public:
-    Directory(int descriptor, DIR* dir);
+    Directory(const std::string &diskPath, const std::string &dirPath, const std::string &user,
+              DirectoriesMonitor &directoriesMonitor);
+    ~Directory();
 
     char* read();
 
@@ -16,6 +19,9 @@ public:
 private:
     int descriptor;
     DIR* dir;
+    std::string user;
+    std::string path;
+    DirectoriesMonitor& directoriesMonitor;
 };
 
 #endif //TIN_DIRECTORY_H

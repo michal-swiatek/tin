@@ -22,13 +22,11 @@ public:
     void init();
     void end();
 
-    File openFile(const char* path, int oflag, const std::string& user);
-    Directory openDirectory(const char* path);
+    File getFile(const std::string &path, File::Flags flags, const std::string& user);
 
-    void closeFile(int fd);
-    void closeDirectory(int fd);
+    void unlinkFile(const std::string& path, const std::string& user);
 
-    void unlinkFile(const std::string& path, const std::string& user) const;
+    Directory getDirectory(const std::string &path, const std::string& user);
 
     //  Copying nor moving is not allowed in singleton class
     FileManager(const FileManager& other) = delete;
@@ -39,15 +37,17 @@ public:
 private:
     FileManager() = default;
 
+    void listFilesRecursively(const std::string& basePath);
+
     using OwnerTable = std::unordered_map<std::string, std::string>;
-    using DirectoryMap = std::unordered_map<int, DIR*>;
 
     FilesMonitor openedFiles;
-    DirectoryMap openedDirectories;
+    DirectoriesMonitor openedDirectories;
 
-    OwnerTable fileOwners;
+    OwnerTable filesOwners;
 
     std::string diskPath;
+    std::string filesOwnersFilePath;
 };
 
 #endif //TIN_FILEMANAGER_H

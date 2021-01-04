@@ -1,7 +1,7 @@
 jacek /2.txt
 jan /1.txt
 pawel /first/5.txt
+jan /first/internal/7.txt
+agata /second/3.txt
 agata /first/internal/6.txt
 jan /first/4.txt
-agata /second/3.txt
-jan /first/internal/7.txt
