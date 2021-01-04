@@ -55,7 +55,6 @@ void FileManager::listFilesRecursively(const std::string &basePath) {
     while ((dp = readdir(dir)) != nullptr) {
         if (dp->d_name != std::string(".") && dp->d_name != std::string("..")) {
             tempPath = basePath + "/" + dp->d_name;
-            std::cout<<tempPath<<'\n';
             if (dp->d_type == DT_DIR) {
                 listFilesRecursively(tempPath);
             } else if (dp->d_type == DT_REG) {
