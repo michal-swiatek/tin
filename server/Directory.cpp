@@ -1,12 +1,10 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #include "Directory.h"
+
+#include <utility>
 
 #include "ServerExceptions.h"
 
-Directory::Directory(int fd, DIR *dir) : descriptor(fd), dir(dir) { }
+Directory::Directory(int descriptor, DIR* dir) : descriptor(descriptor), dir(dir)) {}
 
 char* Directory::read()
 {

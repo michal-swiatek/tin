@@ -1,16 +1,13 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #ifndef TIN_DIRECTORY_H
 #define TIN_DIRECTORY_H
 
 #include <dirent.h>
+#include <string>
 
 class Directory
 {
 public:
-    Directory(int fd, DIR* dir);
+    Directory(int descriptor, DIR* dir);
 
     char* read();
 

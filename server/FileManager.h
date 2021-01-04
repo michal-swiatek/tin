@@ -3,6 +3,7 @@
 
 #include <dirent.h>
 
+#include <fstream>
 #include <unordered_map>
 
 #include "File.h"
@@ -19,9 +20,10 @@ public:
     }
 
     void init();
+    void end();
 
     File openFile(const char* path, int oflag, const std::string& user);
-    Directory openDirectory(const char* path, const std::string& user);
+    Directory openDirectory(const char* path);
 
     void closeFile(int fd);
     void closeDirectory(int fd);
@@ -44,6 +46,8 @@ private:
     DirectoryMap openedDirectories;
 
     OwnerTable fileOwners;
+
+    std::string diskPath;
 };
 
 #endif //TIN_FILEMANAGER_H
