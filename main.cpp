@@ -7,7 +7,7 @@
 #include <dirent.h>
 
 int main() {
-    FileManager::getInstance().init();
+    FileManager::getInstance().init("../", "disk", "filesOwners.txt");
 
 //    std::string dirPath = "/";
 //    std::string user = "asia";

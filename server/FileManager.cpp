@@ -1,18 +1,19 @@
 #include <iostream>
 #include "FileManager.h"
 
-void FileManager::init() {
+void FileManager::init(const std::string& diskPath, const std::string& diskName, const std::string& filesOwnersFileName) {
     // Prepare paths
     // TODO: tutaj zmienna zamiast stalej
-    filesOwnersFileName = "filesOwners.txt";
-    diskPath = "../disk";
-    filesOwnersFilePath = "../" + filesOwnersFileName;
+    this->filesOwnersFileName = filesOwnersFileName;
+    this->diskPath = diskPath;
+    this->diskName = diskName;
+    filesOwnersFilePath = diskPath + filesOwnersFileName;
     // Check if paths are valid
     DIR *dir = opendir(diskPath.c_str());
     if (dir) {
         closedir(dir);
     } else if (ENOENT == errno) {
-        mkdir(diskPath.c_str(), 0700);
+        mkdir(this->diskPath.c_str(), 0700);
     } else {
         // TODO: obsluga bledow opendir
         throw std::exception();
@@ -40,7 +41,7 @@ void FileManager::init() {
     }
 
     // Check if all files were added and if not add them with empty ownership
-    listFilesRecursively(diskPath);
+    listFilesRecursively(this->diskPath+this->diskName);
 }
 
 void FileManager::listFilesRecursively(const std::string &basePath) {
@@ -54,10 +55,11 @@ void FileManager::listFilesRecursively(const std::string &basePath) {
     while ((dp = readdir(dir)) != nullptr) {
         if (dp->d_name != std::string(".") && dp->d_name != std::string("..")) {
             tempPath = basePath + "/" + dp->d_name;
+            std::cout<<tempPath<<'\n';
             if (dp->d_type == DT_DIR) {
                 listFilesRecursively(tempPath);
             } else if (dp->d_type == DT_REG) {
-                std::string filePath = tempPath.substr(tempPath.find(diskPath) + diskPath.length());
+                std::string filePath = tempPath.substr(tempPath.find(diskPath+diskName) + diskPath.length()+diskName.length());
                 try {
                     filesOwners.at(filePath);
                 } catch (std::out_of_range &e) {

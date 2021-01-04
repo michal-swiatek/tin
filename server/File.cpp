@@ -8,11 +8,16 @@ File::File(const std::string &diskPath, const std::string &filePath, Flags flags
         : path(filePath), user(user), filesMonitor(filesMonitor), flags(flags) {
     // TODO: obsluga bledow
     // TODO: rozne tryby otwierania
-    // TODO: rzuc wyjatek jak juz jest taki plik
     filesMonitor.add(filePath, user);
     std::string fullPath = diskPath + filePath;
-    descriptor = open(fullPath.c_str(), flags);
-    throw
+    int flag = flags;
+    if(flags == Flags::CREATE){
+        flag = flag | O_RDWR;
+    }
+    if((descriptor = open(fullPath.c_str(), flag)) == -1){
+        // TODO: blad otwarcia
+        throw std::exception();
+    }
 }
 
 File::~File() {
@@ -24,11 +29,17 @@ File::~File() {
 
 int File::read(char *buffer, int size) const {
     // TODO: co jak nie mozesz czytac
+    if(this->flags == Flags::WRITE_ONLY){
+        throw std::exception();
+    }
     return ::read(this->descriptor, buffer, size);
 }
 
 int File::write(const char *buffer, int size) const {
     // TODO: co jak nie mozesz pisac
+    if(this->flags == Flags::READ_ONLY){
+        throw std::exception();
+    }
     return ::write(this->descriptor, buffer, size);
 }
 

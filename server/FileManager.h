@@ -19,7 +19,7 @@ public:
         return manager;
     }
 
-    void init();
+    void init(const std::string& diskPath, const std::string& diskName, const std::string& filesOwnersFileName);
     void end();
 
     File* getFile(const std::string &path, File::Flags flags, const std::string& user);
@@ -47,6 +47,7 @@ private:
     OwnerTable filesOwners;
 
     std::string diskPath;
+    std::string diskName;
     std::string filesOwnersFilePath;
     std::string filesOwnersFileName;
 };
