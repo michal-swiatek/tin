@@ -10,7 +10,21 @@
 class Server
 {
 public:
-    void openConnection();
+    Server(int connections, const char* ipv4 = nullptr);
+
+    void setup();
+    void close();
+
+    void run() const;
+
+private:
+    int connections{};
+    const char* ipv4 = nullptr;
+
+    int socketFd{};
+    FileManager& fm;
+
+    bool running = true;
 };
 
 #endif //TIN_SERVER_H

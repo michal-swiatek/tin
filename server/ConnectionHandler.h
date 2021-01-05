@@ -15,7 +15,7 @@ public:
 
     enum Errors { INVALID_COMMAND, SERVER_ERROR };  //  TODO: implement more errors
 
-    Requests getRequest() const;
+    [[nodiscard]] Requests getRequest() const;
 };
 
 #endif //TIN_CONNECTIONHANDLER_H

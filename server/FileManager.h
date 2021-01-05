@@ -19,6 +19,7 @@ public:
     }
 
     void init();
+    void close();
 
     File openFile(const char* path, int oflag, const std::string& user);
     Directory openDirectory(const char* path, const std::string& user);
