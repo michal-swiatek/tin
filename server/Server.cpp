@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 
 //  Standard C/C++ libraries
+#include <thread>
 #include <cstdio>
 #include <iostream>
 
@@ -62,14 +63,56 @@ void Server::close()
     fm.close();
 }
 
-void Server::run() const
+void Server::run()
 {
+    //  Start UI thread
+    std::thread uiThread(&Server::uiThread, this);
+
     listen(socketFd, connections);
+    fd_set ready;
+    struct timeval timeout{1, 0};
+
     while (running)
     {
-        struct sockaddr_in clientAddr{};
-        int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(sizeof(clientAddr)));
+        FD_ZERO(&ready);
+        FD_SET(socketFd, &ready);
 
-        //  TODO: Setup connection thread
+        int ret = select(socketFd + 1, &ready, nullptr, nullptr, &timeout);
+
+        if (FD_ISSET(socketFd, &ready))
+        {
+            struct sockaddr_in clientAddr{};
+            int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(sizeof(clientAddr)));
+
+            //  TODO: Setup connection thread
+        }
+
+        //  Check server status
+        //  TODO: implement checking server status
     }
+
+    uiThread.join();
+}
+
+void Server::uiThread()
+{
+    std::string action;
+
+    while (running)
+    {
+        std::cout << "serv$ ";
+        std::cin >> action;
+
+        std::cout << "UI: " << running << '\n';
+
+        if (action == "quit")
+            running = false;
+    }
+}
+
+void Server::printHelp()
+{
+    std::cout << "Server help\n\n";
+    std::cout << "quit - close server and exit\n";
+    std::cout << std::endl;
 }

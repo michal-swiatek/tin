@@ -15,7 +15,7 @@ public:
     void setup();
     void close();
 
-    void run() const;
+    void run();
 
 private:
     int connections{};
@@ -25,6 +25,9 @@ private:
     FileManager& fm;
 
     bool running = true;
+
+    void uiThread();
+    static void printHelp();
 };
 
 #endif //TIN_SERVER_H
