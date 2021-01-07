@@ -1,0 +1,7 @@
+user1 superhaslo1 u
+user2 superhaslo2 a
+user3 superhaslo3 u
+user4 superhaslo4 a
+user5 superhaslo5 u
+user6 superhaslo6 a
+user7 superhaslo7 u

@@ -36,7 +36,7 @@ void Server::setup()
     struct sockaddr_in serverAddress{};
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY; //  TODO: implement setting up specified connection
-    serverAddress.sin_port = 0;
+    serverAddress.sin_port = 8080;
 
     if (bind(socketFd, reinterpret_cast<const sockaddr *>(&serverAddress), sizeof(serverAddress)) == -1)
     {
@@ -97,12 +97,13 @@ void Server::run()
                 std::string login(data, header.param1);
                 std::string password(data + header.param1, header.param2);
 
-                threads.emplace_back(new ConnectionThread(std::move(connectionHandler), running));
+                if (authorization.login(login, password))
+                    threads.emplace_back(new ConnectionThread(std::move(connectionHandler), running));
+                else
+                    ::close(connectionFd);  //  Don't start session if authorization failed
             }
             else
-            {
                 ::close(connectionFd);  //  Don't start session if authorization failed
-            }
         }
 
         //  Check server status
@@ -129,10 +130,10 @@ void Server::uiThread()
         std::cout << "serv$ ";
         std::cin >> action;
 
-        std::cout << "UI: " << running << '\n';
-
         if (action == "quit")
             running = false;
+        else if (action == "connections")
+            std::cout << "Number of connections: " << threads.size() << '\n';
     }
 }
 

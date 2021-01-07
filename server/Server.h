@@ -10,6 +10,7 @@
 #include <memory>
 
 #include "FileManager.h"
+#include "authorization/authorization.h"
 #include "ConnectionThread.h"
 
 class Server
@@ -28,6 +29,8 @@ private:
 
     int socketFd{};
     FileManager& fm;
+
+    Authorization authorization{};
 
     std::atomic<bool> running = true;
     std::vector<std::unique_ptr<ConnectionThread>> threads;
