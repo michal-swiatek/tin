@@ -41,13 +41,13 @@
 
 struct ProtoStructWithoutData {
     uint8_t command;
-    int32_t header1;
+    uint32_t header1;
     uint32_t header2;
 };
 
 struct ProtoStructWithData {
     uint8_t command;
-    int32_t header1;
+    uint32_t header1;
     uint32_t header2;
     uint8_t buf[];
 };
