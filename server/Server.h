@@ -7,10 +7,14 @@
 
 #include "FileManager.h"
 
+#include <atomic>
+#include <vector>
+#include <thread>
+
 class Server
 {
 public:
-    Server(int connections, const char* ipv4 = nullptr);
+    explicit Server(int connections, const char* ipv4 = nullptr);
 
     void setup();
     void close();
@@ -24,10 +28,13 @@ private:
     int socketFd{};
     FileManager& fm;
 
-    bool running = true;
+    std::atomic<bool> running = true;
+    std::vector<std::thread> threads;
 
     void uiThread();
     static void printHelp();
+
+    void connectionThread(int connectionSocketFd);
 };
 
 #endif //TIN_SERVER_H

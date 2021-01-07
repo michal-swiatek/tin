@@ -9,9 +9,11 @@
 #include <netinet/in.h>
 
 //  Standard C/C++ libraries
-#include <thread>
 #include <cstdio>
 #include <iostream>
+
+//  Project libraries
+#include "ConnectionThread.h"
 
 Server::Server(int connections, const char* ipv4) : connections(connections),
                                                     ipv4(ipv4),
@@ -84,7 +86,7 @@ void Server::run()
             struct sockaddr_in clientAddr{};
             int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(sizeof(clientAddr)));
 
-            //  TODO: Setup connection thread
+            threads.emplace_back(&Server::connectionThread, this, connectionFd);
         }
 
         //  Check server status
@@ -92,6 +94,9 @@ void Server::run()
     }
 
     uiThread.join();
+    for (auto& thread : threads)
+        if (thread.joinable())
+            thread.join();
 }
 
 void Server::uiThread()
@@ -115,4 +120,11 @@ void Server::printHelp()
     std::cout << "Server help\n\n";
     std::cout << "quit - close server and exit\n";
     std::cout << std::endl;
+}
+
+void Server::connectionThread(int connectionSocketFd)
+{
+    ConnectionThread t(connectionSocketFd, running);
+
+    t.run();
 }
