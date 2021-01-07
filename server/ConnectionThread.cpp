@@ -10,7 +10,7 @@ void ConnectionThread::run()
 {
     //  TODO: close parent socket
 
-    while (running)
+    while (running && !closed)
     {
         auto request = connectionHandler.getRequest();
 
@@ -25,16 +25,15 @@ void ConnectionThread::run()
             case ConnectionHandler::READ_DIR:       readDirectory();    break;
             case ConnectionHandler::CLOSE_DIR:      closeDirectory();   break;
             case ConnectionHandler::DISCONNECT:     closeConnection();  break;
-            case ConnectionHandler::CONNECT:                            break;
+            case ConnectionHandler::CONNECT:
+            case ConnectionHandler::REPEAT:                             break;
         }
     }
-
-    exit(0);
 }
 
 void ConnectionThread::closeConnection()
 {
-    running = false;
+    closed = true;
 }
 
 void ConnectionThread::openFile()

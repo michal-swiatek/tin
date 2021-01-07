@@ -5,7 +5,10 @@
 #ifndef TIN_CONNECTIONTHREAD_H
 #define TIN_CONNECTIONTHREAD_H
 
+#include <sys/socket.h>
+
 #include <set>
+#include <atomic>
 
 #include "File.h"
 #include "Directory.h"
@@ -13,6 +16,9 @@
 
 class ConnectionThread
 {
+public:
+    ConnectionThread(int socketFd, std::atomic<bool>& running) : running(running), connectionHandler(socketFd) { }
+
     void run();
 
     void closeConnection();
@@ -42,7 +48,8 @@ private:
 
     ConnectionHandler connectionHandler;
 
-    bool running = true;
+    std::atomic<bool>& running;
+    bool closed = false;
 };
 
 #endif //TIN_CONNECTIONTHREAD_H
