@@ -6,10 +6,12 @@
 
 #include "ServerExceptions.h"
 
+ConnectionThread::ConnectionThread(ConnectionHandler&& connectionHandler, std::atomic<bool> &running) : running(running),
+                                                                               connectionHandler(connectionHandler),
+                                                                               thread(&ConnectionThread::run, this) { }
+
 void ConnectionThread::run()
 {
-    //  TODO: close parent socket
-
     while (running && !closed)
     {
         auto request = connectionHandler.getRequest();
@@ -29,6 +31,8 @@ void ConnectionThread::run()
             case ConnectionHandler::REPEAT:                             break;
         }
     }
+
+    closed = true;
 }
 
 void ConnectionThread::closeConnection()

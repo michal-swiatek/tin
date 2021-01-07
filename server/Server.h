@@ -5,11 +5,12 @@
 #ifndef TIN_SERVER_H
 #define TIN_SERVER_H
 
-#include "FileManager.h"
-
 #include <atomic>
 #include <vector>
-#include <thread>
+#include <memory>
+
+#include "FileManager.h"
+#include "ConnectionThread.h"
 
 class Server
 {
@@ -29,12 +30,10 @@ private:
     FileManager& fm;
 
     std::atomic<bool> running = true;
-    std::vector<std::thread> threads;
+    std::vector<std::unique_ptr<ConnectionThread>> threads;
 
     void uiThread();
     static void printHelp();
-
-    void connectionThread(int connectionSocketFd);
 };
 
 #endif //TIN_SERVER_H

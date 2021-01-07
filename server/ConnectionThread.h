@@ -9,6 +9,7 @@
 
 #include <set>
 #include <atomic>
+#include <thread>
 
 #include "File.h"
 #include "Directory.h"
@@ -17,7 +18,7 @@
 class ConnectionThread
 {
 public:
-    ConnectionThread(int socketFd, std::atomic<bool>& running) : running(running), connectionHandler(socketFd) { }
+    ConnectionThread(ConnectionHandler&& connectionHandler, std::atomic<bool>& running);
 
     void run();
 
@@ -36,6 +37,9 @@ public:
 
     void closeDescriptors();
 
+    [[nodiscard]] bool isClosed() const { return closed; }
+    [[nodiscard]] std::thread& getThread() { return thread; }
+
 private:
     struct FileComp { bool operator () (const File& a, const File& b) { return a.getFD() < b.getFD(); } };
     struct DirectoryComp { bool operator () (const Directory& a, const Directory& b) { return a.getFD() < b.getFD(); } };
@@ -46,6 +50,7 @@ private:
     FileTable files;
     DirectoryTable directories;
 
+    std::thread thread;
     ConnectionHandler connectionHandler;
 
     std::atomic<bool>& running;

@@ -57,12 +57,12 @@ void Server::setup()
     //
     //  Setup FilesManager
     //
-    fm.init();
+    fm.init("../", "disk", "filesOwners.txt");
 }
 
 void Server::close()
 {
-    fm.close();
+    fm.end();
 }
 
 void Server::run()
@@ -86,17 +86,38 @@ void Server::run()
             struct sockaddr_in clientAddr{};
             int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(sizeof(clientAddr)));
 
-            threads.emplace_back(&Server::connectionThread, this, connectionFd);
+            auto connectionHandler = ConnectionHandler(connectionFd);
+            auto request = connectionHandler.getRequest();
+
+            if (request == ConnectionHandler::CONNECT)
+            {
+                char* data = connectionHandler.getData();
+                auto header = connectionHandler.getHeader();
+
+                std::string login(data, header.param1);
+                std::string password(data + header.param1, header.param2);
+
+                threads.emplace_back(new ConnectionThread(std::move(connectionHandler), running));
+            }
+            else
+            {
+                ::close(connectionFd);  //  Don't start session if authorization failed
+            }
         }
 
         //  Check server status
-        //  TODO: implement checking server status
+        for (int i = (int)threads.size() - 1; i >= 0; --i)
+            if (threads[i]->isClosed())
+            {
+                threads[i]->getThread().join();
+                threads.erase(threads.begin() + i);
+            }
     }
 
     uiThread.join();
     for (auto& thread : threads)
-        if (thread.joinable())
-            thread.join();
+        if (thread->getThread().joinable())
+            thread->getThread().join();
 }
 
 void Server::uiThread()
@@ -120,11 +141,4 @@ void Server::printHelp()
     std::cout << "Server help\n\n";
     std::cout << "quit - close server and exit\n";
     std::cout << std::endl;
-}
-
-void Server::connectionThread(int connectionSocketFd)
-{
-    ConnectionThread t(connectionSocketFd, running);
-
-    t.run();
 }
