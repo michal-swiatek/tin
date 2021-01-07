@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <mutex>
+#include "FilesExceptions.h"
 
 class FilesMonitor {
 public:
@@ -10,8 +11,7 @@ public:
         std::lock_guard lockGuard(m);
         try{
             files.at(file);
-            // TODO: plik juz otwarty
-            throw std::exception();
+            throw FileAlreadyOpened();
         }catch (std::out_of_range& e){
             files.insert({file, user});
         }

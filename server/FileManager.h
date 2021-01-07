@@ -9,6 +9,8 @@
 #include "File.h"
 #include "Directory.h"
 #include "FilesMonitor.h"
+#include "FilesExceptions.h"
+#include "ServerExceptions.h"
 
 class FileManager
 {
@@ -19,10 +21,10 @@ public:
         return manager;
     }
 
-    void init(const std::string& diskPath, const std::string& diskName, const std::string& filesOwnersFileName);
+    void init(const std::string& diskPathParam, const std::string& diskNameParam, const std::string& filesOwnersFileNameParam);
     void end();
 
-    File* getFile(const std::string &path, File::Flags flags, const std::string& user);
+    File* getFile(const std::string &path, int flags, const std::string& user);
 
     void unlinkFile(const std::string& path, const std::string& user);
 

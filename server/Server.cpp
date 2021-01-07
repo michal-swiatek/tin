@@ -62,7 +62,7 @@ void Server::setup()
 
 void Server::close()
 {
-    fm.close();
+    fm.end();
 }
 
 void Server::run()

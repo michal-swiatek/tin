@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <string>
 #include "DirectoriesMonitor.h"
+#include "DirectoriesExceptions.h"
 
 class Directory {
 public:

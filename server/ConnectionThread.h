@@ -13,6 +13,7 @@
 #include "File.h"
 #include "Directory.h"
 #include "ConnectionHandler.h"
+#include "FileManager.h"
 
 class ConnectionThread
 {
@@ -27,6 +28,7 @@ public:
     void readFile();
     void writeFile();
     void fileStat();
+    void fileSeek();
     void closeFile();
     void unlinkFile();
 
@@ -40,16 +42,20 @@ private:
     struct FileComp { bool operator () (const File& a, const File& b) { return a.getFD() < b.getFD(); } };
     struct DirectoryComp { bool operator () (const Directory& a, const Directory& b) { return a.getFD() < b.getFD(); } };
 
-    using FileTable = std::set<File, FileComp>;
-    using DirectoryTable = std::set<Directory, DirectoryComp>;
+    using FileTable = std::set<File*, FileComp>;
+    using DirectoryTable = std::set<Directory*, DirectoryComp>;
 
     FileTable files;
+    std::unordered_map<int, File*> filesFromFd;
+    std::unordered_map<int, Directory*> directoriesFromD;
     DirectoryTable directories;
 
     ConnectionHandler connectionHandler;
 
     std::atomic<bool>& running;
     bool closed = false;
+
+    std::string user;
 };
 
 #endif //TIN_CONNECTIONTHREAD_H

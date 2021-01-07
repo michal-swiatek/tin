@@ -3,42 +3,35 @@
 
 #include "ServerExceptions.h"
 
-File::File(const std::string &diskPath, const std::string &filePath, Flags flags, const std::string &user,
+File::File(const std::string &diskPath, const std::string &filePath, int flags, const std::string &user,
            FilesMonitor &filesMonitor)
         : path(filePath), user(user), filesMonitor(filesMonitor), flags(flags) {
-    // TODO: obsluga bledow
-    // TODO: rozne tryby otwierania
-    filesMonitor.add(filePath, user);
     std::string fullPath = diskPath + filePath;
     int flag = flags;
-    if(flags == Flags::CREATE){
+    if(flags == O_CREAT){
         flag = flag | O_RDWR;
     }
     if((descriptor = open(fullPath.c_str(), flag)) == -1){
-        // TODO: blad otwarcia
-        throw std::exception();
+        throw FileNotOpened();
     }
+    filesMonitor.add(filePath, user);
 }
 
 File::~File() {
-    // TODO: co jak nie ma pliku
-    // TODO: czy kazdy moze zamknac?
     close(descriptor);
     filesMonitor.remove(path);
 }
 
 int File::read(char *buffer, int size) const {
-    // TODO: co jak nie mozesz czytac
-    if(this->flags == Flags::WRITE_ONLY){
-        throw std::exception();
+    if(this->flags == O_WRONLY){
+        throw FileWriteOnly();
     }
     return ::read(this->descriptor, buffer, size);
 }
 
 int File::write(const char *buffer, int size) const {
-    // TODO: co jak nie mozesz pisac
-    if(this->flags == Flags::READ_ONLY){
-        throw std::exception();
+    if(this->flags == O_RDONLY){
+        throw FileReadOnly();
     }
     return ::write(this->descriptor, buffer, size);
 }
@@ -47,6 +40,18 @@ int File::lseek(int offset, int whence) const {
     return ::lseek(this->descriptor, offset, whence);
 }
 
-int File::fstat(struct stat *stat) const {
-    return ::fstat(this->descriptor, stat);
+int File::fstat(FileStat* fileStat) const {
+    auto* stat = new struct stat();
+    int ret = ::fstat(this->descriptor, stat);
+
+    fileStat->size = stat->st_size;
+    fileStat->blksize = stat->st_blksize;
+    fileStat->blocks = stat->st_blocks;
+    fileStat->atime = stat->st_atime;
+    fileStat->ctime = stat->st_ctime;
+    fileStat->mtime = stat->st_mtime;
+
+    fileStat->flag = this->flags;
+
+    return ret;
 }
