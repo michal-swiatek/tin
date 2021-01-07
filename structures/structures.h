@@ -3,51 +3,51 @@
 
 #include <cstdint>
 
-#define ClientOpenFile 1
-#define ServerOpenFile 2
+const int CLIENT_OPEN_FILE=1;
+const int SERVER_OPEN_FILE=2;
 
-#define ClientReadFile 3
-#define ServerReadFile 4
+const int CLIENT_READ_FILE=3;
+const int SERVER_READ_FILE=4;
 
-#define ClientWriteFile 5
-#define ServerWriteFile 6
+const int CLIENT_WRITE_FILE=5;
+const int SERVER_WRITE_FILE=6;
 
-#define ClientLseekFile 7
-#define ServerLseekFile 8
+const int CLIENT_LSEEK_FILE=7;
+const int SERVER_LSEEK_FILE=8;
 
-#define ClientCloseFile 9
-#define ServerCloseFile 10
+const int CLIENT_CLOSE_FILE=9;
+const int SERVER_CLOSE_FILE=10;
 
-#define ClientUnlinkFile 11
-#define ServerUnlinkFile 12
+const int CLIENT_UNLINK_FILE=11;
+const int SERVER_UNLINK_FILE=12;
 
-#define ClientStatFile 13
-#define ServerStatFile 14
+const int CLIENT_STAT_FILE=13;
+const int SERVER_STAT_FILE=14;
 
-#define ClientOpenSession 15
-#define ServerOpenSession 16
+const int CLIENT_OPEN_SESSION=15;
+const int SERVER_OPEN_SESSION=16;
 
-#define ClientCloseSession 17
-#define ServerCloseSession 18
+const int CLIENT_CLOSE_SESSION=17;
+const int SERVER_CLOSE_SESSION=18;
 
-#define ClientOpenDir 19
-#define ServerOpenDir 20
+const int CLIENT_OPEN_DIR=19;
+const int SERVER_OPEN_DIR=20;
 
-#define ClientReadDir 21
-#define ServerReadDir 22
+const int CLIENT_READ_DIR=21;
+const int SERVER_READ_DIR=22;
 
-#define ClientCloseDir 23
-#define ServerCloseDir 24
+const int CLIENT_CLOSE_DIR=23;
+const int SERVER_CLOSE_DIR=24;
 
 struct ProtoStructWithoutData {
     uint8_t command;
-    int32_t header1;
+    uint32_t header1;
     uint32_t header2;
 };
 
 struct ProtoStructWithData {
     uint8_t command;
-    int32_t header1;
+    uint32_t header1;
     uint32_t header2;
     uint8_t buf[];
 };
