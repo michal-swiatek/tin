@@ -7,6 +7,7 @@
 //  Unix libraries
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 //  Standard C/C++ libraries
 #include <cstdio>
@@ -52,7 +53,8 @@ void Server::setup()
         exit(2);
     }
 
-    std::cout << "Socket port: " << ntohs(serverAddress.sin_port) << '\n';
+    address = inet_ntoa(serverAddress.sin_addr);
+    port = serverAddress.sin_port;
 
     //
     //  Setup FilesManager
@@ -134,6 +136,10 @@ void Server::uiThread()
             running = false;
         else if (action == "connections")
             std::cout << "Number of connections: " << threads.size() << '\n';
+        else if (action == "address")
+            std::cout << "Server address: " << address << '\n';
+        else if (action == "port")
+            std::cout << "Socket port: " << port << '\n';
     }
 }
 

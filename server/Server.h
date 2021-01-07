@@ -37,6 +37,10 @@ private:
 
     void uiThread();
     static void printHelp();
+
+    //  Info
+    int port;
+    std::string address;
 };
 
 #endif //TIN_SERVER_H
