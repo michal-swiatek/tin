@@ -2,6 +2,7 @@
 #include <fstream>
 #include <map>
 #include <string>
+#include <mutex>
 #include "authorization.h"
 
 Authorization::Authorization(){
@@ -24,6 +25,7 @@ Authorization::Authorization(){
         userR = word;
         usersRoles.insert(pair<string, string>(userN, userR));
         usersPass.insert(pair<string, string>(userN, userP));
+        usersActive.insert(pair<string, bool>(userN, false));
         break;
       default:
         break;
@@ -38,6 +40,8 @@ Authorization::Authorization(){
 Authorization::~Authorization(){}
 
 bool Authorization::login(string user, string pass){
+  std::lock_guard<std::mutex> lockGuard(m);
+
   map<string,string>::iterator it = usersPass.begin();
   while (it != usersPass.end())
   {
@@ -46,6 +50,22 @@ bool Authorization::login(string user, string pass){
     if(userN.compare( user) == 0 && userP.compare(pass) == 0 ) return true;
     it++;
   }
+  return false;
+}
+
+bool Authorization::logOut(string user)
+{
+  std::lock_guard<std::mutex> lockGuard(m);
+  map<string,bool>::iterator it = usersActive.begin();
+  while (it != usersActive.end())
+  {
+    string userN = it->first;
+    bool isLogged = it->second;
+    if(userN.compare(user) == 0 && isLogged == true){it->second = false; return true;}
+    if(userN.compare(user) == 0 && isLogged == false) return false;
+    it++;
+  }
+
   return false;
 }
 

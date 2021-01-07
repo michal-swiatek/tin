@@ -75,7 +75,7 @@ int Client::mynfs_open( char* path, int oflag ){
     return descriptor;
 }
 
-int Client::mynfs_read( int fd, char *buf, int size){
+int Client:: mynfs_read( int fd, char *buf, int size){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithData *resp_proto_struct;
     char response[RESPONSE_SIZE];
