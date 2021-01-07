@@ -3,41 +3,41 @@
 
 #include <cstdint>
 
-#define ClientOpenFile 1
-#define ServerOpenFile 2
+const int ClientOpenFile=1;
+const int ServerOpenFile=2;
 
-#define ClientReadFile 3
-#define ServerReadFile 4
+const int ClientReadFile=3;
+const int ServerReadFile=4;
 
-#define ClientWriteFile 5
-#define ServerWriteFile 6
+const int ClientWriteFile=5;
+const int ServerWriteFile=6;
 
-#define ClientLseekFile 7
-#define ServerLseekFile 8
+const int ClientLseekFile=7;
+const int  ServerLseekFile=8;
 
-#define ClientCloseFile 9
-#define ServerCloseFile 10
+const int  ClientCloseFile=9;
+const int  ServerCloseFile=10;
 
-#define ClientUnlinkFile 11
-#define ServerUnlinkFile 12
+const int ClientUnlinkFile=11;
+const int  ServerUnlinkFile=12;
 
-#define ClientStatFile 13
-#define ServerStatFile 14
+const int ClientStatFile=13;
+const int ServerStatFile=14;
 
-#define ClientOpenSession 15
-#define ServerOpenSession 16
+const int ClientOpenSession=15;
+const int ServerOpenSession=16;
 
-#define ClientCloseSession 17
-#define ServerCloseSession 18
+const int  ClientCloseSession=17;
+const int  ServerCloseSession=18;
 
-#define ClientOpenDir 19
-#define ServerOpenDir 20
+const int  ClientOpenDir=19;
+const int  ServerOpenDir=20;
 
-#define ClientReadDir 21
-#define ServerReadDir 22
+const int  ClientReadDir=21;
+const int ServerReadDir=22;
 
-#define ClientCloseDir 23
-#define ServerCloseDir 24
+const int  ClientCloseDir=23;
+const int ServerCloseDir=24;
 
 struct ProtoStructWithoutData {
     uint8_t command;
