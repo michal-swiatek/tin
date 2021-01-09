@@ -11,10 +11,10 @@
 #include <atomic>
 #include <thread>
 
-#include "File.h"
-#include "Directory.h"
+#include "fs/File.h"
+#include "fs/Directory.h"
+#include "fs/FileManager.h"
 #include "ConnectionHandler.h"
-#include "FileManager.h"
 
 class ConnectionThread
 {
@@ -43,8 +43,8 @@ public:
     [[nodiscard]] std::thread& getThread() { return thread; }
 
 private:
-    struct FileComp { bool operator () (const File& a, const File& b) { return a.getFD() < b.getFD(); } };
-    struct DirectoryComp { bool operator () (const Directory& a, const Directory& b) { return a.getFD() < b.getFD(); } };
+    struct FileComp { bool operator () (const File* a, const File* b) { return a->getFD() < b->getFD(); } };
+    struct DirectoryComp { bool operator () (const Directory* a, const Directory* b) { return a->getFD() < b->getFD(); } };
 
     using FileTable = std::set<File*, FileComp>;
     using DirectoryTable = std::set<Directory*, DirectoryComp>;

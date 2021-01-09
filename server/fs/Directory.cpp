@@ -3,7 +3,7 @@
 #include <utility>
 #include <iostream>
 
-#include "ServerExceptions.h"
+#include "../ServerExceptions.h"
 
 Directory::Directory(const std::string &diskPath, const std::string &dirPath, const std::string &user,
                      DirectoriesMonitor &directoriesMonitor)

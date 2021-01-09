@@ -10,7 +10,7 @@
 #include "Directory.h"
 #include "FilesMonitor.h"
 #include "FilesExceptions.h"
-#include "ServerExceptions.h"
+#include "../ServerExceptions.h"
 
 class FileManager
 {

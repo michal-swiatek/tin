@@ -91,7 +91,7 @@ void Server::run()
             auto connectionHandler = ConnectionHandler(connectionFd);
             auto request = connectionHandler.getRequest();
 
-            if (request == ConnectionHandler::CONNECT)
+            if (request == C_CONNECT)
             {
                 char* data = connectionHandler.getData();
                 auto header = connectionHandler.getHeader();

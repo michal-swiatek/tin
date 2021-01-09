@@ -1,10 +1,6 @@
-//
-// Created by micho6 on 03.01.2021.
-//
-
 #include <cstring>
-#include "ConnectionThread.h"
 
+#include "ConnectionThread.h"
 #include "ServerExceptions.h"
 
 ConnectionThread::ConnectionThread(ConnectionHandler&& connectionHandler, std::atomic<bool> &running) : running(running),
@@ -18,19 +14,32 @@ void ConnectionThread::run()
         auto request = connectionHandler.getRequest();
 
         switch (request) {
-            case ConnectionHandler::C_OPEN_FILE:      openFile();         break;
-            case ConnectionHandler::C_READ_FILE:      readFile();         break;
-            case ConnectionHandler::C_WRITE_FILE:     writeFile();        break;
-            case ConnectionHandler::C_FILE_STAT:      fileStat();         break;
-            case ConnectionHandler::C_FILE_LSEEK:     fileSeek();         break;
-            case ConnectionHandler::C_CLOSE_FILE:     closeFile();        break;
-            case ConnectionHandler::C_UNLINK_FILE:    unlinkFile();       break;
-            case ConnectionHandler::C_OPEN_DIR:       openDirectory();    break;
-            case ConnectionHandler::C_READ_DIR:       readDirectory();    break;
-            case ConnectionHandler::C_CLOSE_DIR:      closeDirectory();   break;
-            case ConnectionHandler::C_DISCONNECT:     closeConnection();  break;
-            case ConnectionHandler::C_CONNECT:
-            case ConnectionHandler::REPEAT:                             break;
+            case C_OPEN_FILE:      openFile();         break;
+            case C_READ_FILE:      readFile();         break;
+            case C_WRITE_FILE:     writeFile();        break;
+            case C_FILE_STAT:      fileStat();         break;
+            case C_FILE_LSEEK:     fileSeek();         break;
+            case C_CLOSE_FILE:     closeFile();        break;
+            case C_UNLINK_FILE:    unlinkFile();       break;
+            case C_OPEN_DIR:       openDirectory();    break;
+            case C_READ_DIR:       readDirectory();    break;
+            case C_CLOSE_DIR:      closeDirectory();   break;
+            case C_DISCONNECT:     closeConnection();  break;
+            case C_CONNECT:                            break;// TODO: co tutaj?
+            case REPEAT:                               break;
+
+            // TODO: nieznana komenda - obsluga
+            case S_DISCONNECT:
+            case S_OPEN_FILE:
+            case S_READ_FILE:
+            case S_WRITE_FILE:
+            case S_UNLINK_FILE:
+            case S_FILE_STAT:
+            case S_FILE_LSEEK:
+            case S_CLOSE_FILE:
+            case S_CLOSE_DIR:
+            default:
+                break;
         }
     }
 
@@ -41,20 +50,20 @@ void ConnectionThread::closeConnection()
 {
     closed = true;
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     // Check data and react
     closeDescriptors();
     header.param1 = 0;
     header.param2 = 0;
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_DISCONNECT, header.param1, header.param2);
+    connectionHandler.sendReply(S_DISCONNECT, header.param1, header.param2);
 }
 
 void ConnectionThread::openFile()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = connectionHandler.getData();
     int dataSize = connectionHandler.dataSize();
     // Check data and react
@@ -82,13 +91,13 @@ void ConnectionThread::openFile()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_OPEN_FILE, header.param1, header.param2);
+    connectionHandler.sendReply(S_OPEN_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::readFile()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -124,13 +133,13 @@ void ConnectionThread::readFile()
 
     // Send response
     connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(ConnectionHandler::S_READ_FILE, header.param1, header.param2);
+    connectionHandler.sendReply(S_READ_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::writeFile()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = connectionHandler.getData();
     int dataSize = connectionHandler.dataSize();
     // Check data and react
@@ -159,13 +168,13 @@ void ConnectionThread::writeFile()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_WRITE_FILE, header.param1, header.param2);
+    connectionHandler.sendReply(S_WRITE_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::fileStat()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -193,13 +202,13 @@ void ConnectionThread::fileStat()
     }
     // Send response
     connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(ConnectionHandler::S_FILE_STAT, header.param1, header.param2);
+    connectionHandler.sendReply(S_FILE_STAT, header.param1, header.param2);
 }
 
 void ConnectionThread::fileSeek()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     int* data = (int*)connectionHandler.getData();
     // Check data and react
     File* file;
@@ -224,13 +233,13 @@ void ConnectionThread::fileSeek()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_FILE_LSEEK, header.param1, header.param2);
+    connectionHandler.sendReply(S_FILE_LSEEK, header.param1, header.param2);
 }
 
 void ConnectionThread::closeFile()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     // Check data and react
     File* file;
     try{
@@ -247,13 +256,13 @@ void ConnectionThread::closeFile()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_CLOSE_FILE, header.param1, header.param2);
+    connectionHandler.sendReply(S_CLOSE_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::unlinkFile()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = connectionHandler.getData();
     int dataSize = connectionHandler.dataSize();
     // Check data and react
@@ -278,13 +287,13 @@ void ConnectionThread::unlinkFile()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_UNLINK_FILE, header.param1, header.param2);
+    connectionHandler.sendReply(S_UNLINK_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::openDirectory()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = connectionHandler.getData();
     int dataSize = connectionHandler.dataSize();
     // Check data and react
@@ -302,13 +311,13 @@ void ConnectionThread::openDirectory()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_OPEN_DIR, header.param1, header.param2);
+    connectionHandler.sendReply(S_OPEN_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::readDirectory()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -326,13 +335,13 @@ void ConnectionThread::readDirectory()
     }
     // Send response
     connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(ConnectionHandler::S_READ_DIR, header.param1, header.param2);
+    connectionHandler.sendReply(S_READ_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::closeDirectory()
 {
     // Read data
-    ConnectionHandler::Header header = connectionHandler.getHeader();
+    Header header = connectionHandler.getHeader();
     // Check data and react
     Directory* directory;
     try{
@@ -349,7 +358,7 @@ void ConnectionThread::closeDirectory()
     }
     // Send response
     connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(ConnectionHandler::S_CLOSE_DIR, header.param1, header.param2);
+    connectionHandler.sendReply(S_CLOSE_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::closeDescriptors()

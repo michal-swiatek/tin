@@ -1,7 +1,7 @@
 #include <fcntl.h>
 #include "File.h"
 
-#include "ServerExceptions.h"
+#include "../ServerExceptions.h"
 
 File::File(const std::string &diskPath, const std::string &filePath, int flags, const std::string &user,
            FilesMonitor &filesMonitor)

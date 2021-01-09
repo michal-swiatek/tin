@@ -1,7 +1,5 @@
-#ifndef TIN_STRUCTURES_H
-#define TIN_STRUCTURES_H
-
-#include <cstdint>
+#ifndef TIN_REQUESTS_H
+#define TIN_REQUESTS_H
 
 const int CLIENT_OPEN_FILE=1;
 const int SERVER_OPEN_FILE=2;
@@ -39,19 +37,43 @@ const int SERVER_READ_DIR=22;
 const int CLIENT_CLOSE_DIR=23;
 const int SERVER_CLOSE_DIR=24;
 
+enum Request: char {
+        C_CONNECT,
 
-struct ProtoStructWithoutData {
-    uint8_t command;
-    uint32_t header1;
-    uint32_t header2;
+        C_DISCONNECT,
+        S_DISCONNECT,
+
+        C_OPEN_FILE,
+        S_OPEN_FILE,
+
+        C_READ_FILE,
+        S_READ_FILE,
+
+        C_WRITE_FILE,
+        S_WRITE_FILE,
+
+        C_UNLINK_FILE,
+        S_UNLINK_FILE,
+
+        C_FILE_STAT,
+        S_FILE_STAT,
+
+        C_FILE_LSEEK,
+        S_FILE_LSEEK,
+
+        C_CLOSE_FILE,
+        S_CLOSE_FILE,
+
+        C_OPEN_DIR,
+        S_OPEN_DIR,
+
+        C_READ_DIR,
+        S_READ_DIR,
+
+        C_CLOSE_DIR,
+        S_CLOSE_DIR,
+
+        REPEAT
 };
 
-struct ProtoStructWithData {
-    uint8_t command;
-    uint32_t header1;
-    uint32_t header2;
-    uint8_t buf[];
-};
-
-
-#endif //TIN_STRUCTURES_H
+#endif //TIN_REQUESTS_H

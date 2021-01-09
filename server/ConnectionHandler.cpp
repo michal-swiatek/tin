@@ -19,7 +19,7 @@ ConnectionHandler::~ConnectionHandler()
     close(socketFd);
 }
 
-ConnectionHandler::Request ConnectionHandler::getRequest()
+Request ConnectionHandler::getRequest()
 {
     FD_ZERO(&ready);
     FD_SET(socketFd, &ready);
@@ -43,7 +43,7 @@ void ConnectionHandler::sendReply(Request command, int32_t param1, int32_t param
     send(socketFd, data.data(), data.size(), 0);
 }
 
-ConnectionHandler::Request ConnectionHandler::parseRequest()
+Request ConnectionHandler::parseRequest()
 {
     static const int BUFFER_SIZE = 1024;
     char buffer[BUFFER_SIZE];
