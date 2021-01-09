@@ -5,6 +5,8 @@
 #ifndef TIN_CLIENT_H
 #define TIN_CLIENT_H
 
+#include <stdint.h>
+
 const int DEFAULT_PORT=8080;
 const int RESPONSE_SIZE=4096;
 
