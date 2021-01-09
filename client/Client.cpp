@@ -68,7 +68,7 @@ int Client::mynfs_open( char* path, int oflag ){
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
-    req_proto_struct.command = CLIENT_OPEN_FILE;
+    req_proto_struct.command = Request(C_OPEN_FILE);
     req_proto_struct.header1 = htonl(sizeof(path));
     req_proto_struct.header2 = htonl(oflag);
     strcpy((char*)req_proto_struct.buf, path);
@@ -89,7 +89,7 @@ int Client:: mynfs_read( int fd, char *buf, int size){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_READ_FILE;
+    req_proto_struct.command = Request(C_READ_FILE);
     req_proto_struct.header1 = htonl(size);
     req_proto_struct.header2 = htonl(fd);
 
@@ -114,7 +114,7 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
 
     //TODO czy tutaj size, czy ResponseSize?
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_WRITE_FILE;
+    req_proto_struct.command = Request(C_WRITE_FILE);
     req_proto_struct.header1 = htonl(sizeof(buf));
     req_proto_struct.header2 = htonl(fd);
     memcpy(req_proto_struct.buf, (uint8_t *) buf, size);
@@ -136,7 +136,7 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
 //    ProtoStructWithoutData *resp_proto_struct;
 //    char response[RESPONSE_SIZE];
 //
-//    req_proto_struct.command = CLIENT_LSEEK_FILE;
+//   req_proto_struct.command = Request(C_FILE_LSEEK);
 //    req_proto_struct.header1 = htonl(offset);
 //    req_proto_struct.header2 = htonl(fd);
 //
@@ -164,7 +164,7 @@ int Client::mynfs_close(int fd) {
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_CLOSE_FILE;
+    req_proto_struct.command = Request(C_CLOSE_FILE);
     req_proto_struct.header1 = htonl(fd);
     req_proto_struct.header2 = htonl(0);
 
@@ -186,7 +186,7 @@ int Client::mynfs_unlink(  char* path){
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
-    req_proto_struct.command = CLIENT_UNLINK_FILE;
+    req_proto_struct.command = Request(C_UNLINK_FILE);
     req_proto_struct.header1 = htonl(sizeof(path));
     req_proto_struct.header2 = htonl(0);
     strcpy((char*)req_proto_struct.buf, path);
@@ -206,7 +206,7 @@ int Client::mynfs_fstat(int fd, struct stat *buf){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_STAT_FILE;
+    req_proto_struct.command = Request(C_FILE_STAT);
     req_proto_struct.header1 = htonl(fd);
     req_proto_struct.header2 = htonl(0);
 
@@ -230,7 +230,7 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
-    req_proto_struct.command = CLIENT_OPEN_SESSION;
+    req_proto_struct.command = Request(C_CONNECT);
 
     std::string log(login);
     std::string pas(passwd);
@@ -256,7 +256,7 @@ int Client::mynfs_closesession(){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_CLOSE_SESSION;
+    req_proto_struct.command = Request(C_DISCONNECT);
     req_proto_struct.header1 = htonl(0);
     req_proto_struct.header2 = htonl(0);
 
@@ -280,7 +280,7 @@ int Client::mynfs_opendir( char *path){
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
-    req_proto_struct.command = CLIENT_OPEN_DIR;
+    req_proto_struct.command = Request(C_OPEN_DIR);
     req_proto_struct.header1 = htonl(sizeof(path));
     req_proto_struct.header2 = htonl(0);
     strcpy((char*)req_proto_struct.buf, path);
@@ -301,7 +301,7 @@ char *Client::mynfs_readdir(int dir_fd){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_READ_DIR;
+    req_proto_struct.command = Request(C_READ_DIR);
     req_proto_struct.header1 = htonl(dir_fd);
     req_proto_struct.header2 = htonl(0);
 
@@ -323,7 +323,7 @@ int Client::mynfs_closedir(int dir_fd){
     ProtoStructWithoutData req_proto_struct{};
     ProtoStructWithoutData *resp_proto_struct;
     char response[RESPONSE_SIZE];
-    req_proto_struct.command = CLIENT_CLOSE_DIR;
+    req_proto_struct.command = Request(C_CLOSE_DIR);
     req_proto_struct.header1 = htonl(dir_fd);
     req_proto_struct.header2 = htonl(0);
 
