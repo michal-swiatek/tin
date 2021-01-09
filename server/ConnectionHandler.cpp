@@ -55,7 +55,7 @@ Request ConnectionHandler::parseRequest()
 
     do
     {
-        totalRead += bytesRead;
+        //totalRead += bytesRead;
 
         data.insert(data.end(), buffer, buffer + bytesRead);
     }
