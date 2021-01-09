@@ -4,12 +4,12 @@
 //  TODO: implement more errors
 //  TODO: zaimplementowac kody bledow klienta
 
+
 enum Errors {
     NO_ERROR = 0,
     OTHER_ERROR=1,
     FILE_NOT_EXISTS ,
     INVALID_DESCRIPTOR,
-    NOT_OPEN_DESCRIPTOR,
     INVALID_FLAG_VALUE,
     BAD_LOGIN,
     FOLDER_NOT_EXISTS,
