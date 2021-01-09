@@ -63,45 +63,49 @@ int Client::create_socket_and_open(char *host){
 
 //functions
 
-int Client::mynfs_open( char* path, int oflag ){
-    ProtoStructWithData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+int Client::mynfs_open(char* path, int oflag ){
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
     req_proto_struct.command = Request(C_OPEN_FILE);
-    req_proto_struct.header1 = htonl(sizeof(path));
-    req_proto_struct.header2 = htonl(oflag);
+    Header header{};
+    header.param1 = htonl(sizeof(path));
+    header.param2 = htonl(oflag);
+    req_proto_struct.header = header;
     strcpy((char*)req_proto_struct.buf, path);
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct, sizeof(req_proto_struct), response,
-                                       sizeof(ProtoStructWithoutData));
+                                       sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
-    uint32_t descriptor = ntohl(resp_proto_struct->header2);
+    uint32_t descriptor = ntohl(resp_proto_struct->header.param2);
     return descriptor;
 }
 
-int Client:: mynfs_read( int fd, char *buf, int size){
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithData *resp_proto_struct;
+int Client:: mynfs_read(int fd, char *buf, int size){
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_READ_FILE);
-    req_proto_struct.header1 = htonl(size);
-    req_proto_struct.header2 = htonl(fd);
+    Header header{};
+    header.param1 = htonl(size);
+    header.param2 = htonl(fd);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithData) );
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct) );
 
-    resp_proto_struct = (ProtoStructWithData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
-    int32_t buf_len = ntohl(resp_proto_struct->header2);
+    int32_t buf_len = ntohl(resp_proto_struct->header.param2);
     memcpy(buf, resp_proto_struct->buf, buf_len);
     return buf_len;
 }
@@ -109,31 +113,33 @@ int Client:: mynfs_read( int fd, char *buf, int size){
 
 
 int Client::mynfs_write(int fd, const char *buf, int size) {
-    ProtoStructWithData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
 
     //TODO czy tutaj size, czy ResponseSize?
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_WRITE_FILE);
-    req_proto_struct.header1 = htonl(sizeof(buf));
-    req_proto_struct.header2 = htonl(fd);
+    Header header{};
+    header.param1 = htonl(sizeof(buf));
+    header.param2 = htonl(fd);
+    req_proto_struct.header = header;
     memcpy(req_proto_struct.buf, (uint8_t *) buf, size);
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithoutData));
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
-    int buf_len = ntohl(resp_proto_struct->header2);
+    int buf_len = ntohl(resp_proto_struct->header.param2);
     return buf_len;
 }
 
 //int Client::mynfs_lseek(int fd, int offset, int whence) {
-//    ProtoStructWithData req_proto_struct{};
-//    ProtoStructWithoutData *resp_proto_struct;
+//    ProtoStruct req_proto_struct{};
+//    ProtoStruct *resp_proto_struct;
 //    char response[RESPONSE_SIZE];
 //
 //   req_proto_struct.command = Request(C_FILE_LSEEK);
@@ -147,10 +153,10 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
 //            (uint8_t *) &req_proto_struct,
 //            sizeof(req_proto_struct),
 //            response,
-//            sizeof(ProtoStructWithoutData)
+//            sizeof(ProtoStruct)
 //    );
 //
-//    resp_proto_struct = (ProtoStructWithoutData *) response;
+//    resp_proto_struct = (ProtoStruct *) response;
 //
 //    uint32_t error = ntohl(resp_proto_struct->header1);
 //    if (error != 0) {
@@ -161,18 +167,20 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
 //}
 
 int Client::mynfs_close(int fd) {
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_CLOSE_FILE);
-    req_proto_struct.header1 = htonl(fd);
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(fd);
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithoutData));
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
@@ -180,22 +188,24 @@ int Client::mynfs_close(int fd) {
     return 0;
 }
 
-int Client::mynfs_unlink(  char* path){
+int Client::mynfs_unlink(char* path){
 
-    ProtoStructWithData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
     req_proto_struct.command = Request(C_UNLINK_FILE);
-    req_proto_struct.header1 = htonl(sizeof(path));
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(sizeof(path));
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
     strcpy((char*)req_proto_struct.buf, path);
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct, sizeof(req_proto_struct), response,
-                                       sizeof(ProtoStructWithoutData));
+                                       sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
@@ -203,22 +213,24 @@ int Client::mynfs_unlink(  char* path){
 }
 
 int Client::mynfs_fstat(int fd, struct stat *buf){
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_FILE_STAT);
-    req_proto_struct.header1 = htonl(fd);
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(fd);
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithData));
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
-    int32_t buf_len = ntohl(resp_proto_struct->header2);
+    int32_t buf_len = ntohl(resp_proto_struct->header.param2);
     memcpy(buf, resp_proto_struct->buf, buf_len);
     return 0;
 }
@@ -226,8 +238,8 @@ int Client::mynfs_fstat(int fd, struct stat *buf){
 
 int Client::mynfs_opensession(char *host, char *login, char *passwd){
 
-    ProtoStructWithData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
     req_proto_struct.command = Request(C_CONNECT);
@@ -236,16 +248,18 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     std::string pas(passwd);
     std::string logPas = log+pas;
 
-    req_proto_struct.header1 = htonl(logPas.size());
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(logPas.size());
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
     strcpy((char*)req_proto_struct.buf, (char*) logPas.c_str());
 
     if(create_socket_and_open(host)!=0) return -1;
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct, sizeof(req_proto_struct), response,
-                                       sizeof(ProtoStructWithoutData));
+                                       sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
@@ -253,18 +267,20 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
 }
 
 int Client::mynfs_closesession(){
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_DISCONNECT);
-    req_proto_struct.header1 = htonl(0);
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(0);
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithoutData));
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
@@ -276,62 +292,68 @@ int Client::mynfs_closesession(){
 
 
 int Client::mynfs_opendir( char *path){
-    ProtoStructWithData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
 
     req_proto_struct.command = Request(C_OPEN_DIR);
-    req_proto_struct.header1 = htonl(sizeof(path));
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(sizeof(path));
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
     strcpy((char*)req_proto_struct.buf, path);
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct, sizeof(req_proto_struct), response,
-                                       sizeof(ProtoStructWithoutData));
+                                       sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }
-    int descriptor = ntohl(resp_proto_struct->header2);
+    int descriptor = ntohl(resp_proto_struct->header.param2);
     return descriptor;
 }
 
 char *Client::mynfs_readdir(int dir_fd){
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_READ_DIR);
-    req_proto_struct.header1 = htonl(dir_fd);
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(dir_fd);
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response,  sizeof(ProtoStructWithData));
+                                       sizeof(req_proto_struct), response,  sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return nullptr;
     }
-    int32_t buf_len = ntohl(resp_proto_struct->header2);
+    int32_t buf_len = ntohl(resp_proto_struct->header.param2);
     char *folderName = nullptr;
     memcpy(folderName, resp_proto_struct->buf, buf_len);
     return folderName;
 }
 
 int Client::mynfs_closedir(int dir_fd){
-    ProtoStructWithoutData req_proto_struct{};
-    ProtoStructWithoutData *resp_proto_struct;
+    ProtoStruct req_proto_struct{};
+    ProtoStruct *resp_proto_struct;
     char response[RESPONSE_SIZE];
     req_proto_struct.command = Request(C_CLOSE_DIR);
-    req_proto_struct.header1 = htonl(dir_fd);
-    req_proto_struct.header2 = htonl(0);
+    Header header{};
+    header.param1 = htonl(dir_fd);
+    header.param2 = htonl(0);
+    req_proto_struct.header = header;
 
     send_message_and_wait_for_response( (uint8_t *) &req_proto_struct,
-                                       sizeof(req_proto_struct), response, sizeof(ProtoStructWithoutData));
+                                       sizeof(req_proto_struct), response, sizeof(ProtoStruct));
 
-    resp_proto_struct = (ProtoStructWithoutData *) response;
-    uint32_t error = ntohl(resp_proto_struct->header1);
+    resp_proto_struct = (ProtoStruct *) response;
+    uint32_t error = ntohl(resp_proto_struct->header.param1);
     if (error != 0) {
         return -1;
     }

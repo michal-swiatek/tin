@@ -2,27 +2,18 @@
 #define TIN_PROTOCOL_H
 
 #include <cstdint>
-
-// TODO: polaczyc Header z pozostaymi strukturami
-
-// TODO: polaczyc withData z withoutData?
-
-struct ProtoStructWithoutData {
-    uint8_t command;
-    uint32_t header1;
-    uint32_t header2;
-};
-
-struct ProtoStructWithData {
-    uint8_t command;
-    uint32_t header1;
-    uint32_t header2;
-    uint8_t buf[];
-};
+#include "Requests.h"
 
 struct Header {
     int32_t param1;
     int32_t param2;
 };
+
+struct ProtoStruct {
+    uint8_t command;
+    Header header;
+    uint8_t buf[];
+};
+
 
 #endif //TIN_PROTOCOL_H
