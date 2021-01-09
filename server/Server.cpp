@@ -91,7 +91,7 @@ void Server::run()
 
             if (connectionFd == -1)
             {
-                std::cout << strerror(errno) << '\n';
+                //std::cout << strerror(errno) << '\n';
                 //  TODO: return Error invalid connection
                 exit(1);
             }
