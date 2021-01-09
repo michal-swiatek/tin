@@ -40,16 +40,17 @@ const int CLIENT_CLOSE_DIR=23;
 const int SERVER_CLOSE_DIR=24;
 
 enum Request: char {
-        C_CONNECT,
+    C_OPEN_FILE = 1,
+    S_OPEN_FILE = 2,
 
-        C_DISCONNECT,
-        S_DISCONNECT,
+    C_READ_FILE = 3,
+    S_READ_FILE = 4,
 
-        C_OPEN_FILE,
-        S_OPEN_FILE,
+    C_WRITE_FILE = 5,
+    S_WRITE_FILE = 6,
 
-        C_READ_FILE,
-        S_READ_FILE,
+    C_FILE_LSEEK = 7,
+    S_FILE_LSEEK = 8,
 
         C_WRITE_FILE,
         S_WRITE_FILE,

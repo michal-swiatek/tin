@@ -86,7 +86,15 @@ void Server::run()
         if (FD_ISSET(socketFd, &ready))
         {
             struct sockaddr_in clientAddr{};
-            int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(sizeof(clientAddr)));
+            int addrlen = sizeof(clientAddr);
+            int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(&addrlen));
+
+            if (connectionFd == -1)
+            {
+                std::cout << strerror(errno) << '\n';
+                //  TODO: return Error invalid connection
+                exit(1);
+            }
 
             auto connectionHandler = ConnectionHandler(connectionFd);
             auto request = connectionHandler.getRequest();

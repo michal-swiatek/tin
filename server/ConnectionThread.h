@@ -43,8 +43,8 @@ public:
     [[nodiscard]] std::thread& getThread() { return thread; }
 
 private:
-    struct FileComp { bool operator () (const File* a, const File* b) { return a->getFD() < b->getFD(); } };
-    struct DirectoryComp { bool operator () (const Directory* a, const Directory* b) { return a->getFD() < b->getFD(); } };
+    struct FileComp { bool operator () (const File* a, const File* b) const { return a->getFD() < b->getFD(); } };
+    struct DirectoryComp { bool operator () (const Directory* a, const Directory* b) const { return a->getFD() < b->getFD(); } };
 
     using FileTable = std::set<File*, FileComp>;
     using DirectoryTable = std::set<Directory*, DirectoryComp>;

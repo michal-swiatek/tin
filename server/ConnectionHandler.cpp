@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 #include <cstring>
+#include <iostream>
 
 ConnectionHandler::ConnectionHandler(int socketFd) : socketFd(socketFd)
 {
@@ -50,15 +51,16 @@ Request ConnectionHandler::parseRequest()
 
     //  Read 1 byte command + 8 bytes header
     int bytesRead = 0;
-    int totalRead = 0;
     data.clear();
 
-    while ((bytesRead = recv(socketFd, buffer, BUFFER_SIZE, 0)) > 0)
+    do
     {
         totalRead += bytesRead;
 
         data.insert(data.end(), buffer, buffer + bytesRead);
     }
+    while (bytesRead > 0);
+
 
     //  Parse header and command
     Request command;
