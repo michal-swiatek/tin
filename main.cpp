@@ -9,7 +9,5 @@ int main() {
     server.run();
     server.close();
 
-    Client client;
-
     return 0;
 }
