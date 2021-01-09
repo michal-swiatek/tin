@@ -7,7 +7,7 @@
 #include <string>
 #include "FilesMonitor.h"
 #include "FilesExceptions.h"
-#include "../../structures/FileStat.h"
+#include "../../utilities/FileStat.h"
 
 class File {
 public:

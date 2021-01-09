@@ -6,9 +6,9 @@
 #include <vector>
 #include <string>
 
-#include "../structures/Requests.h"
-#include "../structures/Errors.h"
-#include "../structures/Protocol.h"
+#include "../utilities/Requests.h"
+#include "../utilities/Errors.h"
+#include "../utilities/Protocol.h"
 
 class ConnectionHandler
 {

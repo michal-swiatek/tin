@@ -9,7 +9,7 @@ int main() {
     server.run();
     server.close();
 
-    //Client client;
+    Client client;
 
     return 0;
 }

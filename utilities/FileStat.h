@@ -1,7 +1,3 @@
-//
-// Created by ruzarowi on 1/7/21.
-//
-
 #ifndef TIN_FILESTAT_H
 #define TIN_FILESTAT_H
 

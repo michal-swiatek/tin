@@ -1,6 +1,6 @@
 #include "Client.h"
-#include "../structures/Protocol.h"
-#include "../structures/Requests.h"
+#include "../utilities/Protocol.h"
+#include "../utilities/Requests.h"
 #include <arpa/inet.h>
 #include <iostream>
 #include <sys/stat.h>

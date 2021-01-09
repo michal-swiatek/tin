@@ -1,6 +1,8 @@
 #ifndef TIN_REQUESTS_H
 #define TIN_REQUESTS_H
 
+// TODO: undefined command
+
 const int CLIENT_OPEN_FILE=1;
 const int SERVER_OPEN_FILE=2;
 

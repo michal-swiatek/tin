@@ -3,6 +3,10 @@
 
 #include <cstdint>
 
+// TODO: polaczyc Header z pozostaymi strukturami
+
+// TODO: polaczyc withData z withoutData?
+
 struct ProtoStructWithoutData {
     uint8_t command;
     uint32_t header1;
