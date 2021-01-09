@@ -249,8 +249,6 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     if (error != 0) {
         return -1;
     }
-    // TODO: nie wiem co to ale bylo w merge
-    //global_host=host;
     return 0;
 }
 
