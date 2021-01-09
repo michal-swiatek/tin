@@ -6,17 +6,12 @@
 #include <unistd.h>
 #include <string>
 #include "FilesMonitor.h"
+#include "FilesExceptions.h"
+#include "../structures/FileStat.h"
 
 class File {
 public:
-    enum Flags {
-        READ_ONLY = O_RDONLY,
-        WRITE_ONLY = O_WRONLY,
-        READ_WRITE = O_RDWR,
-        CREATE = O_CREAT
-    };
-
-    File(const std::string &diskPath, const std::string &filePath, Flags flags, const std::string &user,
+    File(const std::string &diskPath, const std::string &filePath, int flags, const std::string &user,
          FilesMonitor &filesMonitor);
 
     ~File();
@@ -30,7 +25,7 @@ public:
 
     int lseek(int offset, int whence) const;
 
-    int fstat(struct stat *stat) const;
+    int fstat(FileStat* fileStat) const;
 
     [[nodiscard]] inline int getFD() const { return descriptor; }
 
@@ -41,7 +36,7 @@ private:
     int descriptor;
     std::string user;
     std::string path;
-    Flags flags;
+    int flags;
 };
 
 #endif //TIN_FILE_H

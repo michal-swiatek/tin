@@ -3,6 +3,7 @@
 
 #include <set>
 #include <mutex>
+#include "DirectoriesExceptions.h"
 
 class DirectoriesMonitor {
 public:
@@ -11,8 +12,7 @@ public:
         if(directories.find(std::make_pair(directory, user)) == directories.end()){
             directories.insert(std::make_pair(directory, user));
         }else{
-            // TODO: directory juz otwarte
-            throw std::exception();
+            throw DirectoryAlreadyOpened();
         }
     }
 

@@ -64,7 +64,7 @@ ConnectionHandler::Request ConnectionHandler::parseRequest()
     Request command;
     memcpy(&command, buffer, sizeof(char));
     memcpy(&header.param1, buffer + 1, sizeof(int32_t));
-    memcpy(&header.param1, buffer + 5, sizeof(int32_t));
+    memcpy(&header.param2, buffer + 5, sizeof(int32_t));
 
     //  TODO: switch(command) instead of copy
 

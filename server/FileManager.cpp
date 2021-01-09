@@ -1,33 +1,29 @@
 #include <iostream>
 #include "FileManager.h"
 
-void FileManager::init(const std::string& diskPath, const std::string& diskName, const std::string& filesOwnersFileName) {
+void FileManager::init(const std::string& diskPathParam, const std::string& diskNameParam, const std::string& filesOwnersFileNameParam) {
     // Prepare paths
-    // TODO: tutaj zmienna zamiast stalej
-    this->filesOwnersFileName = filesOwnersFileName;
-    this->diskPath = diskPath;
-    this->diskName = diskName;
-    filesOwnersFilePath = diskPath + filesOwnersFileName;
+    this->filesOwnersFileName = filesOwnersFileNameParam;
+    this->diskPath = diskPathParam;
+    this->diskName = diskNameParam;
+    filesOwnersFilePath = diskPathParam + filesOwnersFileNameParam;
     // Check if paths are valid
-    DIR *dir = opendir(diskPath.c_str());
+    DIR *dir = opendir(diskPathParam.c_str());
     if (dir) {
         closedir(dir);
     } else if (ENOENT == errno) {
         mkdir(this->diskPath.c_str(), 0700);
     } else {
-        // TODO: obsluga bledow opendir
-        throw std::exception();
+        throw DiskNotCreated();
     }
-    std::string filesOwnersFileDir = filesOwnersFilePath.substr(0, filesOwnersFilePath.find(filesOwnersFileName));
+    std::string filesOwnersFileDir = filesOwnersFilePath.substr(0, filesOwnersFilePath.find(filesOwnersFileNameParam));
     dir = opendir(filesOwnersFileDir.c_str());
     if (dir) {
         closedir(dir);
     } else if (ENOENT == errno) {
-        // TODO: folder w ktorym ma byc plik nie istnieje
-        throw std::exception();
+        throw FilesOwnersDirectoryNotExist();
     } else {
-        // TODO: obsluga bledow opendir
-        throw std::exception();
+        throw FilesOwnersDirectoryNotOpened();
     }
     // Prepare file owners
     std::ifstream infile(filesOwnersFilePath);
@@ -80,26 +76,26 @@ void FileManager::end() {
 }
 
 
-File* FileManager::getFile(const std::string &path, File::Flags flags, const std::string &user) {
-    // TODO: co ze sprawdzaniem czy mozna otworzyc
-    // TODO: co jak O_CREATE
-    try{
-        if( filesOwners.at(path) != user){
-            // TODO: plik nie nalezy do usera
-            throw std::exception();
-        }
-        if (flags == File::Flags::CREATE) {
-            // TODO: co jak create
+File* FileManager::getFile(const std::string &path, int flags, const std::string &user) {
+    if (flags == O_CREAT){
+        try{
+            if( filesOwners.at(path) != user){
+                throw FileNotPermitted();
+            }
+        }catch (std::out_of_range& e){
             auto file = new File(diskPath, path, flags, user, openedFiles);
             filesOwners.insert({path, user});
             return file;
         }
-    }catch (std::out_of_range& e){
-        // TODO: nie ma takiego pliku
-    }catch (std::exception& e){
-        // TODO: nie udalo sie stworzyc pliku
     }
-    return new File(diskPath, path, flags, user, openedFiles);
+    try{
+        if( filesOwners.at(path) != user){
+            throw FileNotPermitted();
+        }
+        return new File(diskPath, path, flags, user, openedFiles);
+    }catch (std::out_of_range& e){
+        throw FileNotExist();
+    }
 }
 
 void FileManager::unlinkFile(const std::string &path, const std::string &user) {
@@ -109,16 +105,13 @@ void FileManager::unlinkFile(const std::string &path, const std::string &user) {
             if (unlink(fullPath.c_str()) == 0) {
                 filesOwners.erase(path);
             }else{
-                // TODO: co jak nie uda sie usunac
-                throw std::exception();
+                throw FileNotUnlinked();
             }
         }
-        // TODO: co jak nie wlasciciel probuje usunac
-        throw std::exception();
+        throw FileNotPermitted();
     }
     catch (std::out_of_range &e) {
-        // TODO: co jak nie ma takiego pliku
-        throw std::exception();
+        throw FileNotExist();
     }
 }
 
