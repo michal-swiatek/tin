@@ -53,7 +53,7 @@ void ConnectionThread::closeConnection()
     Header header = connectionHandler.getHeader();
     // Check data and react
     closeDescriptors();
-    header.param1 = 0;
+    header.param1 = NO_ERROR;
     header.param2 = 0;
     // Send response
     connectionHandler.setData(nullptr, 0);
@@ -71,22 +71,19 @@ void ConnectionThread::openFile()
         File* file;
         try{
             file = FileManager::getInstance().getFile(std::string(data, dataSize), header.param2, this->user);
-            header.param1 = 0;
+            header.param1 = NO_ERROR;
             header.param2 = file->getFD();
             files.insert(file);
             filesFromFd.insert({file->getFD(), file});
         }catch (FileNotExist& exception){
-            // TODO: zamienic na kod bledu
-            header.param1 = 2;
+            header.param1 = FILE_NOT_EXISTS;
             header.param2 = 0;
         }catch(FileNotPermitted& exception){
-            // TODO: co jak nie mam uprawnien do otwarcia - kod bledu itp
-            header.param1 = 1;
+            header.param1 = FILE_NOT_PERMITED;
             header.param2 = 0;
         }
     }else{
-        // TODO: zmienic na kod bledu
-        header.param1 = 5;
+        header.param1 = INVALID_FLAG_VALUE;
         header.param2 = 0;
     }
     // Send response
@@ -109,25 +106,21 @@ void ConnectionThread::readFile()
         header.param1 = 0;
         int res = file->read(data, dataSize);
         if(res < 0){
-            // TODO: kod bledu
-            header.param1 = 1;
+            header.param1 = OTHER_ERROR;
             header.param2 = 0;
             dataSize = 0;
             delete(data);
             data = nullptr;
         }else{
-            // TODO: kod bledu
-            header.param1 = 0;
+            header.param1 = NO_ERROR;
             header.param2 = res;
         }
 
     }catch (std::out_of_range& e){
-        // TODO: kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }catch (FileWriteOnly& e){
-        // TODO: kod bledu
-        header.param1 = 1;
+        header.param1 = OTHER_ERROR;
         header.param2 = 0;
     }
 
@@ -148,22 +141,18 @@ void ConnectionThread::writeFile()
         file = filesFromFd.at(header.param2);
         int res = file->write(data, dataSize);
         if(res < 0){
-            // TODO: kod bledu
-            header.param1 = 1;
+            header.param1 = OTHER_ERROR;
             header.param2 = 0;
         }else{
-            // TODO: kod bledu
-            header.param1 = 0;
+            header.param1 = NO_ERROR;
             header.param2 = res;
         }
 
     }catch (std::out_of_range& e){
-        // TODO: kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }catch (FileReadOnly& e){
-        // TODO: kod bledu
-        header.param1 = 1;
+        header.param1 = FILE_READ_ONLY;
         header.param2 = 0;
     }
     // Send response
@@ -185,19 +174,16 @@ void ConnectionThread::fileStat()
         fileStat = new FileStat();
         int res = file->fstat(fileStat);
         if(res < 0){
-            // TODO: kod bledu
-            header.param1 = 1;
+            header.param1 = OTHER_ERROR;
             header.param2 = 0;
         }else{
-            // TODO: kod bledu
-            header.param1 = 0;
+            header.param1 = NO_ERROR;
             header.param2 = sizeof(FileStat);
             dataSize = header.param2;
             data = (char*) fileStat;
         }
     }catch (std::out_of_range& e){
-        // TODO: kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }
     // Send response
@@ -218,17 +204,14 @@ void ConnectionThread::fileSeek()
         int whence = *data;
         int res = file->lseek(offset, whence);
         if(res < 0){
-            // TODO: kod bledu
-            header.param1 = 1;
+            header.param1 = OTHER_ERROR;
             header.param2 = 0;
         }else{
-            // TODO: kod bledu
-            header.param1 = 0;
+            header.param1 = NO_ERROR;
             header.param2 = res;
         }
     }catch (std::out_of_range& e){
-        // TODO: kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }
     // Send response
@@ -244,14 +227,13 @@ void ConnectionThread::closeFile()
     File* file;
     try{
         file = filesFromFd.at(header.param1);
-        header.param1 = 0;
+        header.param1 = NO_ERROR;
         header.param2 = 0;
         files.erase(file);
         filesFromFd.erase(file->getFD());
         delete(file);
     }catch (std::out_of_range& exception){
-        // TODO: zamienic na kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }
     // Send response
@@ -268,21 +250,18 @@ void ConnectionThread::unlinkFile()
     // Check data and react
     try{
         FileManager::getInstance().unlinkFile(std::string(data, dataSize), this->user);
-        header.param1 = 0;
+        header.param1 = NO_ERROR;
         header.param2 = 0;
     }catch (FileNotExist& exception) {
-        // TODO: zamienic na kod bledu
-        header.param1 = 2;
+        header.param1 = FILE_NOT_EXISTS;
         header.param2 = 0;
     }
     catch (FileNotPermitted& exception) {
-        // TODO: zamienic na kod bledu
-        header.param1 = 1;
+        header.param1 = FILE_NOT_PERMITED;
         header.param2 = 0;
     }
     catch (FileNotUnlinked& exception) {
-        // TODO: zamienic na kod bledu
-        header.param1 = 1;
+        header.param1 = FILE_NOT_UNLINKED;
         header.param2 = 0;
     }
     // Send response
@@ -305,8 +284,7 @@ void ConnectionThread::openDirectory()
         directories.insert(directory);
         directoriesFromD.insert({directory->getFD(), directory});
     }catch (DirectoryNotOpened& exception){
-        // TODO: zamienic na kod bledu
-        header.param1 = 8;
+        header.param1 = DIRECTORY_NOT_OPENED;
         header.param2 = 0;
     }
     // Send response
@@ -325,12 +303,11 @@ void ConnectionThread::readDirectory()
     try{
         directory = directoriesFromD.at(header.param1);
         data = directory->read();
-        header.param1 = 0;
+        header.param1 = NO_ERROR;
         header.param2 = strlen(data);
         dataSize = header.param2;
     }catch (std::out_of_range& exception){
-        // TODO: zamienic na kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }
     // Send response
@@ -346,14 +323,13 @@ void ConnectionThread::closeDirectory()
     Directory* directory;
     try{
         directory = directoriesFromD.at(header.param1);
-        header.param1 = 0;
+        header.param1 = NO_ERROR;
         header.param2 = 0;
         directories.erase(directory);
         directoriesFromD.erase(directory->getFD());
         delete(directory);
     }catch (std::out_of_range& exception){
-        // TODO: zamienic na kod bledu
-        header.param1 = 3;
+        header.param1 = INVALID_DESCRIPTOR;
         header.param2 = 0;
     }
     // Send response
