@@ -2,7 +2,7 @@
 // Created by ula on 07.01.2021.
 //
 
-#include "client.h"
+#include "Client.h"
 
 int main() {
 
