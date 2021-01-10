@@ -15,11 +15,12 @@
 #include "fs/Directory.h"
 #include "fs/FileManager.h"
 #include "ConnectionHandler.h"
+#include <memory>
 
 class ConnectionThread
 {
 public:
-    ConnectionThread(ConnectionHandler&& connectionHandler, std::atomic<bool>& running);
+    ConnectionThread(std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool>& running);
 
     void run();
 

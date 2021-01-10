@@ -3,8 +3,8 @@
 #include "ConnectionThread.h"
 #include "ServerExceptions.h"
 
-ConnectionThread::ConnectionThread(ConnectionHandler&& connectionHandler, std::atomic<bool> &running) : running(running),
-                                                                               connectionHandler(connectionHandler),
+ConnectionThread::ConnectionThread(std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool> &running) : running(running),
+                                                                               connectionHandler(std::move(connectionHandler)),
                                                                                thread(&ConnectionThread::run, this) { }
 
 void ConnectionThread::run()
@@ -50,7 +50,7 @@ void ConnectionThread::closeConnection()
 {
     closed = true;
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     // Check data and react
     closeDescriptors();
     header.param1 = 0;

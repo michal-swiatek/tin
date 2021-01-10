@@ -11,6 +11,7 @@
 
 //  Standard C/C++ libraries
 #include <cstdio>
+#include <memory>
 #include <iostream>
 
 //  Project libraries
@@ -33,11 +34,15 @@ void Server::setup()
         exit(1);
     }
 
+    //  TODO: remove in final version
+    int option = 1;
+    setsockopt(socketFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+
     //  Bind server address to socket
     struct sockaddr_in serverAddress{};
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY; //  TODO: implement setting up specified connection
-    serverAddress.sin_port = 8080;
+    serverAddress.sin_port = htons(8080);
 
     if (bind(socketFd, reinterpret_cast<const sockaddr *>(&serverAddress), sizeof(serverAddress)) == -1)
     {
@@ -45,7 +50,7 @@ void Server::setup()
         exit(1);
     }
 
-    //  Print server port
+    //  Check server address
     int length = sizeof(serverAddress);
     if (getsockname(socketFd, (sockaddr *)(&serverAddress), (socklen_t *)(&length)) == -1)
     {
@@ -89,31 +94,48 @@ void Server::run()
             int addrlen = sizeof(clientAddr);
             int connectionFd = accept(socketFd, (sockaddr *)(&clientAddr), (socklen_t *)(&addrlen));
 
-            if (connectionFd == -1)
-            {
-                std::cout << strerror(errno) << '\n';
-                //  TODO: return Error invalid connection
-                exit(1);
-            }
+//            auto connectionHandler = ConnectionHandler(connectionFd);
+            auto connectionHandler = std::make_unique<ConnectionHandler>(connectionFd);
+            auto request = connectionHandler->getRequest();
 
-            auto connectionHandler = ConnectionHandler(connectionFd);
-            auto request = connectionHandler.getRequest();
+            std::cout << "INFO: " << request << '\n';
 
             if (request == C_CONNECT)
             {
-                char* data = connectionHandler.getData();
-                auto header = connectionHandler.getHeader();
+                char* data = connectionHandler->getData();
+                auto header = connectionHandler->getHeader();
 
+                //  Get login and password as specified in protocol
                 std::string login(data, header.param1);
                 std::string password(data + header.param1, header.param2);
 
-                if (authorization.login(login, password))
+                if (authorization.login(login, password)){
+                    std::cout << "Udalo sie zalogowac!\n";
+
+                    connectionHandler->setHeader(S_CONNECT, NO_ERROR, 0);
+                    connectionHandler->sendReply(true);
+
                     threads.emplace_back(new ConnectionThread(std::move(connectionHandler), running));
-                else
-                    ::close(connectionFd);  //  Don't start session if authorization failed
+                }
+                else{
+                    std::cout << "Nie udalo sie zalogowac!\n";
+                    connectionHandler->setHeader(S_CONNECT, BAD_LOGIN, 0);
+                    connectionHandler->sendReply(true);
+                }
             }
-            else
-                ::close(connectionFd);  //  Don't start session if authorization failed
+            else if( request == REQUEST_TIMEOUT )
+            {
+                std::cout << "Wystapil timeout!\n";
+                connectionHandler->setHeader(S_CONNECT, CONNECTION_TIMEOUT, 0);
+                connectionHandler->sendReply(true);
+            }
+            else {
+                std::cout << "Invalid request!\n";
+                connectionHandler->setHeader(S_CONNECT, INVALID_REQUEST, 0);
+                connectionHandler->sendReply(true);
+            }
+
+            //  Connection socket will be closed by ConnectionHandler destructor
         }
 
         //  Check server status
