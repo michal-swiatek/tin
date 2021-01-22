@@ -40,7 +40,9 @@ enum Request: char {
     C_CLOSE_DIR = 23,
     S_CLOSE_DIR = 24,
 
-    REPEAT
+    REPEAT,
+    REQUEST_TIMEOUT,
+    INVALID_REQUEST
 };
 
 #endif //TIN_REQUESTS_H

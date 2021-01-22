@@ -56,7 +56,7 @@ private:
     DirectoryTable directories;
 
     std::thread thread;
-    ConnectionHandler connectionHandler;
+    std::unique_ptr<ConnectionHandler> connectionHandler;
 
     std::atomic<bool>& running;
     bool closed = false;

@@ -11,7 +11,7 @@ void ConnectionThread::run()
 {
     while (running && !closed)
     {
-        auto request = connectionHandler.getRequest();
+        auto request = connectionHandler->getRequest();
 
         switch (request) {
             case C_OPEN_FILE:      openFile();         break;
@@ -50,22 +50,22 @@ void ConnectionThread::closeConnection()
 {
     closed = true;
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     // Check data and react
     closeDescriptors();
     header.param1 = NO_ERROR;
     header.param2 = 0;
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_DISCONNECT, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_DISCONNECT, header.param1, header.param2);
 }
 
 void ConnectionThread::openFile()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
-    char* data = connectionHandler.getData();
-    int dataSize = connectionHandler.dataSize();
+    Header header = connectionHandler->getHeader();
+    char* data = connectionHandler->getData();
+    int dataSize = connectionHandler->dataSize();
     // Check data and react
     if(header.param2 != O_CREAT && header.param2 != O_RDWR && header.param2 != O_RDONLY && header.param2 != O_WRONLY){
         File* file;
@@ -87,14 +87,14 @@ void ConnectionThread::openFile()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_OPEN_FILE, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_OPEN_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::readFile()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -125,16 +125,16 @@ void ConnectionThread::readFile()
     }
 
     // Send response
-    connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(S_READ_FILE, header.param1, header.param2);
+    connectionHandler->setData(data, dataSize);
+    connectionHandler->sendReply(S_READ_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::writeFile()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
-    char* data = connectionHandler.getData();
-    int dataSize = connectionHandler.dataSize();
+    Header header = connectionHandler->getHeader();
+    char* data = connectionHandler->getData();
+    int dataSize = connectionHandler->dataSize();
     // Check data and react
     File* file;
     try{
@@ -156,14 +156,14 @@ void ConnectionThread::writeFile()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_WRITE_FILE, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_WRITE_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::fileStat()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -187,15 +187,15 @@ void ConnectionThread::fileStat()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(S_FILE_STAT, header.param1, header.param2);
+    connectionHandler->setData(data, dataSize);
+    connectionHandler->sendReply(S_FILE_STAT, header.param1, header.param2);
 }
 
 void ConnectionThread::fileSeek()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
-    int* data = (int*)connectionHandler.getData();
+    Header header = connectionHandler->getHeader();
+    int* data = (int*)connectionHandler->getData();
     // Check data and react
     File* file;
     try{
@@ -215,14 +215,14 @@ void ConnectionThread::fileSeek()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_FILE_LSEEK, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_FILE_LSEEK, header.param1, header.param2);
 }
 
 void ConnectionThread::closeFile()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     // Check data and react
     File* file;
     try{
@@ -237,16 +237,16 @@ void ConnectionThread::closeFile()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_CLOSE_FILE, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_CLOSE_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::unlinkFile()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
-    char* data = connectionHandler.getData();
-    int dataSize = connectionHandler.dataSize();
+    Header header = connectionHandler->getHeader();
+    char* data = connectionHandler->getData();
+    int dataSize = connectionHandler->dataSize();
     // Check data and react
     try{
         FileManager::getInstance().unlinkFile(std::string(data, dataSize), this->user);
@@ -265,16 +265,16 @@ void ConnectionThread::unlinkFile()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_UNLINK_FILE, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_UNLINK_FILE, header.param1, header.param2);
 }
 
 void ConnectionThread::openDirectory()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
-    char* data = connectionHandler.getData();
-    int dataSize = connectionHandler.dataSize();
+    Header header = connectionHandler->getHeader();
+    char* data = connectionHandler->getData();
+    int dataSize = connectionHandler->dataSize();
     // Check data and react
     Directory* directory;
     try{
@@ -288,14 +288,14 @@ void ConnectionThread::openDirectory()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_OPEN_DIR, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_OPEN_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::readDirectory()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     char* data = nullptr;
     int dataSize = 0;
     // Check data and react
@@ -311,14 +311,14 @@ void ConnectionThread::readDirectory()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(data, dataSize);
-    connectionHandler.sendReply(S_READ_DIR, header.param1, header.param2);
+    connectionHandler->setData(data, dataSize);
+    connectionHandler->sendReply(S_READ_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::closeDirectory()
 {
     // Read data
-    Header header = connectionHandler.getHeader();
+    Header header = connectionHandler->getHeader();
     // Check data and react
     Directory* directory;
     try{
@@ -333,8 +333,8 @@ void ConnectionThread::closeDirectory()
         header.param2 = 0;
     }
     // Send response
-    connectionHandler.setData(nullptr, 0);
-    connectionHandler.sendReply(S_CLOSE_DIR, header.param1, header.param2);
+    connectionHandler->setData(nullptr, 0);
+    connectionHandler->sendReply(S_CLOSE_DIR, header.param1, header.param2);
 }
 
 void ConnectionThread::closeDescriptors()
