@@ -15,5 +15,7 @@ int main() {
     for(const auto& elem : v)
         std::cout << elem << ' ';
 
+    v = std::vector<char>();
+
     return 0;
 }

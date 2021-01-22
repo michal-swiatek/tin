@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "fs/FileManager.h"
-#include "authorization/authorization.h"
+#include "authorization/Authorization.h"
 #include "ConnectionThread.h"
 
 class Server

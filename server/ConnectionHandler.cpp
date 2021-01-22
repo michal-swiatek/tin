@@ -9,66 +9,106 @@
 #include <cstring>
 #include <iostream>
 
-ConnectionHandler::ConnectionHandler(int socketFd) : socketFd(socketFd)
+ConnectionHandler::ConnectionHandler(int connectionFd, const timeval& timeout) : connectionFd(connectionFd), timeout(timeout)
 {
     FD_ZERO(&ready);
-    timeout = {1, 0};
+
+    if (setsockopt(connectionFd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout)) < 0)
+        perror("Set connection socket receive timeout");
 }
 
 ConnectionHandler::~ConnectionHandler()
 {
-    close(socketFd);
+    std::cout << "Deleting " << connectionFd << '\n';
+    close(connectionFd);
 }
 
 Request ConnectionHandler::getRequest()
 {
     FD_ZERO(&ready);
-    FD_SET(socketFd, &ready);
+    FD_SET(connectionFd, &ready);
 
-    int ret = select(socketFd + 1, &ready, nullptr, nullptr, &timeout);
+    int ret = select(connectionFd + 1, &ready, nullptr, nullptr, &timeout);
 
-    if (FD_ISSET(socketFd, &ready))
+    if (FD_ISSET(connectionFd, &ready))
         return parseRequest();
     else
         return REPEAT;
 }
 
-void ConnectionHandler::sendReply(Request command, int32_t param1, int32_t param2)
+void ConnectionHandler::sendReply(bool clearData)
 {
-    char buffer[9];
-    memcpy(buffer, &command, sizeof(char));
-    memcpy(buffer + 1, &param1, sizeof(int));
-    memcpy(buffer + 5, &param2, sizeof(int));
+    if (clearData)
+        data.clear();
 
-    data.insert(data.begin(), buffer, buffer + 9);
-    send(socketFd, data.data(), data.size(), 0);
+    int replySize = dataSize() + sizeof(header);
+    char buffer[replySize];
+
+    header.size = dataSize();
+
+    memcpy(buffer, &header, sizeof(header));
+    memcpy(buffer, data.data(), dataSize());
+
+    int ret = send(connectionFd, buffer, replySize, 0);
+    if (ret == 0)
+        perror("Writing empty connection socket");
+    else if (ret < 0)
+        perror("Writing on connection socket");
+}
+
+void ConnectionHandler::sendRequest(bool clearData)
+{
+    sendReply(clearData);
 }
 
 Request ConnectionHandler::parseRequest()
 {
     static const int BUFFER_SIZE = 1024;
-    char buffer[BUFFER_SIZE];
 
-    //  Read 1 byte command + 8 bytes header
+    //
+    //  Load header (1 byte - command, 4 bytes - param1, 4 bytes - param2)
+    //
+
+    int offset = 0;
     int bytesRead = 0;
-    data.clear();
 
-    do
+    while ((bytesRead = recv(connectionFd, (&header) + offset, sizeof(header) - offset, 0)) > 0)
     {
-        //totalRead += bytesRead;
+        offset += bytesRead;
 
-        data.insert(data.end(), buffer, buffer + bytesRead);
+        if (offset >= sizeof(header))
+            break;
     }
-    while (bytesRead > 0);
 
+    if (bytesRead == -1)
+        return REQUEST_TIMEOUT;
 
-    //  Parse header and command
-    Request command;
-    memcpy(&command, buffer, sizeof(char));
-    memcpy(&header.param1, buffer + 1, sizeof(int32_t));
-    memcpy(&header.param2, buffer + 5, sizeof(int32_t));
+    //
+    //  Load associated data
+    //
 
-    //  TODO: switch(command) instead of copy
+    char buffer[BUFFER_SIZE];
+    data.clear();   //  Clear previous data
 
-    return command;
+    int bytesToRead = header.size;
+    int totalBytesRead = 0;
+
+    while ((bytesRead = recv(connectionFd, buffer, sizeof(buffer), 0)) > 0)
+    {
+        data.insert(data.end(), buffer, buffer + bytesRead);
+
+        totalBytesRead += bytesRead;
+        if (totalBytesRead >= bytesToRead)
+            break;
+    }
+
+    if (bytesRead == -1)
+        return REQUEST_TIMEOUT;
+
+    return static_cast<Request>(header.command);
+}
+
+Request ConnectionHandler::getReply()
+{
+    return getRequest();
 }
