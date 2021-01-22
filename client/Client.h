@@ -25,7 +25,7 @@ public:
     int mynfs_fstat(int fd, struct stat *buf);
 
     int mynfs_opendir(char *path);
-    char *mynfs_readdir(int dir_fd);
+    char* mynfs_readdir(int dir_fd);
     int mynfs_closedir(int dir_fd);
 
     int mynfs_opensession(char *host, char *login, char *passwd);

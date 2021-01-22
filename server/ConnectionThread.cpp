@@ -50,7 +50,7 @@ void ConnectionThread::closeConnection()
 {
     closed = true;
     // Read data
-    Header header = connectionHandler->getHeader();
+    Header header = connectionHandler.getHeader();
     // Check data and react
     closeDescriptors();
     header.param1 = NO_ERROR;
