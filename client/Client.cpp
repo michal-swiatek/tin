@@ -51,7 +51,7 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     std::string logPas = log+pas;
 
     header.size = logPas.size();
-    header.param1 = logPas.size();
+    header.param1 = log.size();
     header.param2 = pas.size();
 
     std::vector<char> data;

@@ -1,6 +1,6 @@
 pawel:/first/5.txt
-jacek:/2.txt
 jan:/1.txt
+jacek:/2.txt
 agata:/first/internal/6.txt
 jan:/first/4.txt
 jan:/first/internal/7.txt
