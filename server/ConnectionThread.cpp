@@ -14,7 +14,7 @@ void ConnectionThread::run()
     while (running && !closed)
     {
         auto request = connectionHandler->getRequest();
-        std::cout<<this->user<<" sent request: "<<request<<'\n';
+//        std::cout<<this->user<<" sent request: "<<request<<'\n';
         switch (request) {
             case C_OPEN_FILE:      openFile();         break;
             case C_READ_FILE:      readFile();         break;
