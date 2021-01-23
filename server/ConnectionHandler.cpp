@@ -19,7 +19,7 @@ ConnectionHandler::ConnectionHandler(int connectionFd, const timeval& timeout) :
 
 ConnectionHandler::~ConnectionHandler()
 {
-    std::cout << "Deleting " << connectionFd << '\n';
+    std::cout << "Closing socket: " << connectionFd << '\n';
     close(connectionFd);
 }
 

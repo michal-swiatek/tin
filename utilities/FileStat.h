@@ -1,6 +1,8 @@
 #ifndef TIN_FILESTAT_H
 #define TIN_FILESTAT_H
 
+#include <sys/types.h>
+
 struct FileStat{
     off_t     size;    /* total size, in bytes */
     blksize_t blksize; /* blocksize for file system I/O */

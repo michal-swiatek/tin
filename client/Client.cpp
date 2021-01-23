@@ -8,9 +8,10 @@
 
 Client::Client() {
     sockfd=-1;
+    mynfs_error = NO_ERROR;
 }
 
-Client::~Client(){}
+Client::~Client()= default;
 
 int Client::mynfs_opensession(char *host, char *login, char *passwd){
 
@@ -31,8 +32,14 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
         return -1;
     }
 
+    struct timeval tv{};
+    tv.tv_sec = CLIENT_TIMEOUT;
+    tv.tv_usec = 0;
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv));
+
     if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        this->mynfs_error = CONNECTION_TIMEOUT;
+        this->mynfs_error = SERVER_ERROR;
         return -1;
     }
 
@@ -54,6 +61,16 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     }
 
     sendMessage(header, data);
+
+    if( header.command != C_CONNECT) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
 
     readMessage(header, data);
 
@@ -90,6 +107,16 @@ int Client::mynfs_closesession(){
 
     sendMessage(header, data);
 
+    if( header.command != C_DISCONNECT) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
     if( header.command == S_DISCONNECT) {
@@ -100,6 +127,9 @@ int Client::mynfs_closesession(){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -124,6 +154,16 @@ int Client::mynfs_open(char* path, int oflag ){
 
     sendMessage(header, data);
 
+    if( header.command != C_OPEN_FILE) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
     if( header.command == S_OPEN_FILE) {
@@ -136,6 +176,9 @@ int Client::mynfs_open(char* path, int oflag ){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -153,6 +196,16 @@ int Client:: mynfs_read(int fd, char *buf, int size){
 
     sendMessage(header, data);
 
+    if( header.command != C_READ_FILE ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
 
@@ -168,6 +221,9 @@ int Client:: mynfs_read(int fd, char *buf, int size){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -187,6 +243,16 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
 
     sendMessage(header, data);
 
+    if( header.command != C_WRITE_FILE ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
 
@@ -200,6 +266,9 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -217,6 +286,16 @@ int Client::mynfs_lseek(int fd, int offset, int whence) {
 
     sendMessage(header, data);
 
+    if( header.command != C_FILE_LSEEK ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
 
@@ -230,6 +309,9 @@ int Client::mynfs_lseek(int fd, int offset, int whence) {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -247,6 +329,16 @@ int Client::mynfs_close(int fd) {
 
     sendMessage(header, data);
 
+    if( header.command != C_CLOSE_FILE) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
 
@@ -260,6 +352,9 @@ int Client::mynfs_close(int fd) {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -283,8 +378,17 @@ int Client::mynfs_unlink(char* path){
 
     sendMessage(header, data);
 
-    readMessage(header, data);
+    if( header.command != C_UNLINK_FILE ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
 
+    readMessage(header, data);
 
     if( header.command == S_UNLINK_FILE) {
         if( header.param1 == NO_ERROR ){
@@ -296,6 +400,9 @@ int Client::mynfs_unlink(char* path){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -313,6 +420,16 @@ int Client::mynfs_fstat(int fd, FileStat *buf) {
 
     sendMessage(header, data);
 
+    if( header.command != C_FILE_STAT ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
+
     readMessage(header, data);
 
 
@@ -327,6 +444,9 @@ int Client::mynfs_fstat(int fd, FileStat *buf) {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
@@ -350,8 +470,17 @@ int Client::mynfs_opendir( char *path){
 
     sendMessage(header, data);
 
-    readMessage(header, data);
+    if( header.command != C_OPEN_DIR ) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
 
+    readMessage(header, data);
 
     if( header.command == S_OPEN_DIR) {
         if( header.param1 == NO_ERROR ){
@@ -363,7 +492,10 @@ int Client::mynfs_opendir( char *path){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else {
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
+    }else {
         mynfs_error = SERVER_ERROR;
         return -1;
     }
@@ -380,8 +512,17 @@ char *Client::mynfs_readdir(int dir_fd){
 
     sendMessage(header, data);
 
-    readMessage(header, data);
+    if( header.command != C_READ_DIR) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return nullptr;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return nullptr;
+        }
+    }
 
+    readMessage(header, data);
 
     if( header.command == S_READ_DIR) {
         if( header.param1 == NO_ERROR ){
@@ -395,6 +536,9 @@ char *Client::mynfs_readdir(int dir_fd){
             mynfs_error = OTHER_ERROR;
             return nullptr;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return nullptr;
     } else {
         mynfs_error = SERVER_ERROR;
         return nullptr;
@@ -412,8 +556,17 @@ int Client::mynfs_closedir(int dir_fd){
 
     sendMessage(header, data);
 
-    readMessage(header, data);
+    if( header.command != C_CLOSE_DIR) {
+        if(header.command == REQUEST_TIMEOUT){
+            mynfs_error = CONNECTION_TIMEOUT;
+            return -1;
+        } else {
+            mynfs_error = SERVER_ERROR;
+            return -1;
+        }
+    }
 
+    readMessage(header, data);
 
     if( header.command == S_CLOSE_DIR) {
         if( header.param1 == NO_ERROR ){
@@ -425,14 +578,13 @@ int Client::mynfs_closedir(int dir_fd){
             mynfs_error = OTHER_ERROR;
             return -1;
         }
+    } else if(header.command == REQUEST_TIMEOUT){
+        mynfs_error = CONNECTION_TIMEOUT;
+        return -1;
     } else {
         mynfs_error = SERVER_ERROR;
         return -1;
     }
-}
-
-int Client::getNFSError() const {
-    return mynfs_error;
 }
 
 void Client::sendMessage(Header& header, std::vector<char> &data) const {
@@ -446,8 +598,15 @@ void Client::sendMessage(Header& header, std::vector<char> &data) const {
     {
         if (bytesSent == -1)
         {
-            std::cout << strerror(errno) << '\n';
-            exit(1);
+            header.param1 = 0;
+            header.param2 = 0;
+            header.size = 0;
+            if(errno == EAGAIN || errno == EWOULDBLOCK){
+                header.command = REQUEST_TIMEOUT;
+            }else{
+                header.command = INVALID_REQUEST;
+            }
+            return;
         }
 
         offset += bytesSent;
@@ -471,8 +630,15 @@ void Client::sendMessage(Header& header, std::vector<char> &data) const {
 
             if (bytesSent == -1)
             {
-                std::cout << strerror(errno) << '\n';
-                exit(1);
+                header.param1 = 0;
+                header.param2 = 0;
+                header.size = 0;
+                if(errno == EAGAIN || errno == EWOULDBLOCK){
+                    header.command = REQUEST_TIMEOUT;
+                }else{
+                    header.command = INVALID_REQUEST;
+                }
+                return;
             }
 
             bytesOffset += bytesSent;
@@ -499,8 +665,15 @@ void Client::readMessage(Header &header, std::vector<char> &data) const {
     {
         if (bytesRead == -1)
         {
-            std::cout << strerror(errno) << '\n';
-            exit(1);
+            header.param1 = 0;
+            header.param2 = 0;
+            header.size = 0;
+            if(errno == EAGAIN || errno == EWOULDBLOCK){
+                header.command = REQUEST_TIMEOUT;
+            }else{
+                header.command = INVALID_REQUEST;
+            }
+            return;
         }
 
         offset += bytesRead;
@@ -515,8 +688,15 @@ void Client::readMessage(Header &header, std::vector<char> &data) const {
         {
             if (bytesRead == -1)
             {
-                std::cout << strerror(errno) << '\n';
-                exit(1);
+                header.param1 = 0;
+                header.param2 = 0;
+                header.size = 0;
+                if(errno == EAGAIN || errno == EWOULDBLOCK){
+                    header.command = REQUEST_TIMEOUT;
+                }else{
+                    header.command = INVALID_REQUEST;
+                }
+                return;
             }
 
             data.insert(data.end(), buffer, buffer + bytesRead);
@@ -526,5 +706,31 @@ void Client::readMessage(Header &header, std::vector<char> &data) const {
             if (totalBytesRead >= bytesToRead)
                 break;
         }
+    }
+}
+
+const char *mynfs_strerror(Errors error) {
+    // TODO: lepsze komunikaty bledow
+    switch (error)
+    {
+        case NO_ERROR:                  return "NO_ERROR";
+        case OTHER_ERROR:               return "OTHER_ERROR";
+        case FILE_NOT_EXISTS:           return "FILE_NOT_EXISTS";
+        case INVALID_DESCRIPTOR:        return "INVALID_DESCRIPTOR";
+        case INVALID_FLAG_VALUE:        return "INVALID_FLAG_VALUE";
+        case BAD_LOGIN:                 return "BAD_LOGIN";
+        case FOLDER_NOT_EXISTS:         return "FOLDER_NOT_EXISTS";
+        case FILE_NOT_PERMITED:         return "FILE_NOT_PERMITED";
+        case FILE_WRITE_ONLY:           return "FILE_WRITE_ONLY";
+        case FILE_READ_ONLY:            return "FILE_READ_ONLY";
+        case FILE_NOT_UNLINKED:         return "FILE_NOT_UNLINKED";
+        case DIRECTORY_NOT_OPENED:      return "DIRECTORY_NOT_OPENED";
+        case INVALID_CONNECTION:        return "INVALID_CONNECTION";
+        case CONNECTION_TIMEOUT:        return "CONNECTION_TIMEOUT";
+        case COULD_NOT_CREATE_SOCKET:   return "COULD_NOT_CREATE_SOCKET";
+        case INET_PTON_ERROR:           return "INET_PTON_ERROR";
+        case INVALID_COMMAND:           return "INVALID_COMMAND";
+        case SERVER_ERROR:              return "SERVER_ERROR";
+        default:                        return "UNKNOWN_ERROR";
     }
 }
