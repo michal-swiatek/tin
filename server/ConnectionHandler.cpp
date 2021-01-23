@@ -13,8 +13,8 @@ ConnectionHandler::ConnectionHandler(int connectionFd, const timeval& timeout) :
 {
     FD_ZERO(&ready);
 
-    if (setsockopt(connectionFd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout)) < 0)
-        perror("Set connection socket receive timeout");
+//    if (setsockopt(connectionFd, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout)) < 0)
+//        perror("Set connection socket receive timeout");
 }
 
 ConnectionHandler::~ConnectionHandler()
@@ -40,6 +40,8 @@ void ConnectionHandler::sendReply(bool clearData)
 {
     if (clearData)
         data.clear();
+
+    //  TODO: Create send loop
 
     int replySize = dataSize() + sizeof(header);
     char buffer[replySize];
@@ -93,13 +95,16 @@ Request ConnectionHandler::parseRequest()
     int bytesToRead = header.size;
     int totalBytesRead = 0;
 
-    while ((bytesRead = recv(connectionFd, buffer, sizeof(buffer), 0)) > 0)
+    if (bytesToRead > 0)
     {
-        data.insert(data.end(), buffer, buffer + bytesRead);
+        while ((bytesRead = recv(connectionFd, buffer, sizeof(buffer), 0)) > 0)
+        {
+            data.insert(data.end(), buffer, buffer + bytesRead);
 
-        totalBytesRead += bytesRead;
-        if (totalBytesRead >= bytesToRead)
-            break;
+            totalBytesRead += bytesRead;
+            if (totalBytesRead >= bytesToRead)
+                break;
+        }
     }
 
     if (bytesRead == -1)
