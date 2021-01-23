@@ -1,7 +1,3 @@
-//
-// Created by ruzarowi on 1/7/21.
-//
-
 #ifndef TIN_FILESEXCEPTIONS_H
 #define TIN_FILESEXCEPTIONS_H
 

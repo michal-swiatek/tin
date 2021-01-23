@@ -64,7 +64,7 @@ void Server::setup()
     //
     //  Setup FilesManager
     //
-    fm.init("../", "disk", "filesOwners.txt");
+    fm.init("./", "disk", "filesOwners.txt");
 }
 
 void Server::close()
@@ -162,13 +162,13 @@ void Server::uiThread()
         std::cout << "serv$ ";
         std::cin >> action;
 
-        if (action == "quit")
+        if (action == "quit" || action == "q")
             running = false;
-        else if (action == "connections")
+        else if (action == "connections" ||action == "c")
             std::cout << "Number of connections: " << threads.size() << '\n';
-        else if (action == "address")
+        else if (action == "address" || action == "a")
             std::cout << "Server address: " << address << '\n';
-        else if (action == "port")
+        else if (action == "port" || action == "p")
             std::cout << "Socket port: " << port << '\n';
     }
 }

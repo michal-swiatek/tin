@@ -5,7 +5,9 @@
 
 const int DEFAULT_PORT = 8080;
 
-const int CLIENT_TIMEOUT = 5;
+const int CLIENT_SEND_TIMEOUT = 0;
+
+const int CLIENT_RECV_TIMEOUT = 0;
 
 struct Header {
     int32_t size;

@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <fcntl.h>
 
 const char *mynfs_strerror(Errors error);
 
@@ -18,9 +19,16 @@ private:
 
     void readMessage( Header& header, std::vector<char>& data ) const;
 public:
+    enum FileFlag{
+        O_RO = O_RDONLY,
+        O_WO = O_WRONLY,
+        O_RW = O_RDWR,
+        O_CR = O_CREAT
+    };
+
     Client();
     ~Client();
-    int mynfs_open(char* path, int oflag );
+    int mynfs_open(char* path, FileFlag oflag );
 
     int mynfs_read(int fd, char *buf, int size);
     int mynfs_write(int fd, const char *buf, int size);

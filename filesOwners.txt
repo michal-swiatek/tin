@@ -1,7 +1,7 @@
-pawel:/first/5.txt
-jan:/1.txt
-jacek:/2.txt
-agata:/first/internal/6.txt
-jan:/first/4.txt
-jan:/first/internal/7.txt
-agata:/second/3.txt
+user2:/first/4.txt
+user2:/1.txt
+user1:/2.txt
+user3:/first/5.txt
+user4:/second/3.txt
+user2:/first/internal/7.txt
+user4:/first/internal/6.txt

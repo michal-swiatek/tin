@@ -1,7 +1,7 @@
-user1 superhaslo1 u
-user2 superhaslo2 a
-user3 superhaslo3 u
-user4 superhaslo4 a
-user5 superhaslo5 u
-user6 superhaslo6 a
-user7 superhaslo7 u
+user1 pass1 a
+user2 pass2 u
+user3 pass3 u
+user4 pass4 u
+user5 pass5 u
+user6 pass6 u
+user7 pass7 a

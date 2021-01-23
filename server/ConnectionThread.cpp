@@ -1,4 +1,5 @@
 #include <cstring>
+#include <iostream>
 
 #include "ConnectionThread.h"
 #include "ServerExceptions.h"
@@ -12,7 +13,7 @@ void ConnectionThread::run()
     while (running && !closed)
     {
         auto request = connectionHandler->getRequest();
-
+        std::cout<<this->user<<" sent request: "<<request<<'\n';
         switch (request) {
             case C_OPEN_FILE:      openFile();         break;
             case C_READ_FILE:      readFile();         break;
@@ -67,7 +68,7 @@ void ConnectionThread::openFile()
     char* data = connectionHandler->getData();
     int dataSize = connectionHandler->dataSize();
     // Check data and react
-    if(header.param2 != O_CREAT && header.param2 != O_RDWR && header.param2 != O_RDONLY && header.param2 != O_WRONLY){
+    if(header.param2 == O_CREAT || header.param2 == O_RDWR || header.param2 == O_RDONLY || header.param2 == O_WRONLY){
         File* file;
         try{
             file = FileManager::getInstance().getFile(std::string(data, dataSize), header.param2, this->user);

@@ -33,9 +33,10 @@ int Client::mynfs_opensession(char *host, char *login, char *passwd){
     }
 
     struct timeval tv{};
-    tv.tv_sec = CLIENT_TIMEOUT;
+    tv.tv_sec = CLIENT_RECV_TIMEOUT;
     tv.tv_usec = 0;
     setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    tv.tv_sec = CLIENT_SEND_TIMEOUT;
     setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv));
 
     if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
@@ -136,7 +137,7 @@ int Client::mynfs_closesession(){
     }
 }
 
-int Client::mynfs_open(char* path, int oflag ){
+int Client::mynfs_open(char* path, FileFlag oflag ){
 
     std::string filePath(path);
 
