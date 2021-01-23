@@ -22,7 +22,7 @@ const std::string DATA = "user1superhaslo1";
 
 int main()
 {
-    char* ip = "192.168.0.31";
+    char* ip = "192.168.1.3";
     int port = 8080;
     int sock;
     struct sockaddr_in server;

@@ -2,6 +2,8 @@
 // Created by micho6 on 09.01.2021.
 //
 
+#include "../utilities/Protocol.h"
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
@@ -10,11 +12,6 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-
-struct Header {
-    int32_t param1;
-    int32_t param2;
-};
 
 int main() {
 
@@ -118,9 +115,13 @@ int main() {
                 exit(3);    //  TODO: return
             }
 
+            std::cout<<header.command<<'\n';
+            std::cout<<header.param1<<'\n';
+            std::cout<<header.param2<<'\n';
+
             std::cout<< ntohl(header.param2) <<'\n';
 
-            bytesToRead = header.param2;
+            bytesToRead = header.param1;
 
             while ((bytesRead = recv(connectionFd, buffer, sizeof(buffer), 0)) > 0)
             {

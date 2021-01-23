@@ -1,17 +1,21 @@
 #ifndef TIN_CLIENT_H
 #define TIN_CLIENT_H
 
-#include <cstdint>
+#include "../utilities/Protocol.h"
+#include "../utilities/Requests.h"
+#include "../utilities/Errors.h"
+#include "../utilities/FileStat.h"
 
-const int DEFAULT_PORT=8080;
-const int RESPONSE_SIZE=4096;
+#include <cstdint>
+#include <vector>
 
 class Client {
 private:
+    Errors mynfs_error;
     int sockfd;
-    int send_message_and_wait_for_response( uint8_t *msg, uint32_t msg_len, char *recvBuff,
-                                           uint32_t expected_response_size);
-    int create_socket_and_open(char *host);
+
+    void sendMessage( Header& header, std::vector<char>& data ) const;
+    void readMessage( Header& header, std::vector<char>& data ) const;
 public:
     Client();
     ~Client();
@@ -22,7 +26,7 @@ public:
     int mynfs_lseek(int fd, int offset, int whence);
     int mynfs_close(int fd);
     int mynfs_unlink(char* path);
-    int mynfs_fstat(int fd, struct stat *buf);
+    int mynfs_fstat(int fd, FileStat *buf);
 
     int mynfs_opendir(char *path);
     char* mynfs_readdir(int dir_fd);
@@ -31,6 +35,8 @@ public:
     int mynfs_opensession(char *host, char *login, char *passwd);
     int mynfs_closesession();
 
+
+    int getNFSError() const;
 };
 
 
