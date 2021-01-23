@@ -1,10 +1,11 @@
 #include <cstring>
 #include <iostream>
+#include <utility>
 
 #include "ConnectionThread.h"
 #include "ServerExceptions.h"
 
-ConnectionThread::ConnectionThread(std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool> &running) : running(running),
+ConnectionThread::ConnectionThread(std::string user, std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool> &running) : user(std::move(user)), running(running),
                                                                                connectionHandler(std::move(connectionHandler)),
                                                                                thread(&ConnectionThread::run, this) { }
 

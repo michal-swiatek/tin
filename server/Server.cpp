@@ -115,7 +115,7 @@ void Server::run()
                     connectionHandler->setHeader(S_CONNECT, NO_ERROR, 0);
                     connectionHandler->sendReply(true);
 
-                    threads.emplace_back(new ConnectionThread(std::move(connectionHandler), running));
+                    threads.emplace_back(new ConnectionThread(login, std::move(connectionHandler), running));
                 }
                 else{
                     std::cout << "Nie udalo sie zalogowac!\n";

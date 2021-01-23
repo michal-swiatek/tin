@@ -20,7 +20,7 @@
 class ConnectionThread
 {
 public:
-    ConnectionThread(std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool>& running);
+    ConnectionThread(std::string user, std::unique_ptr<ConnectionHandler>&& connectionHandler, std::atomic<bool>& running);
 
     void run();
 
