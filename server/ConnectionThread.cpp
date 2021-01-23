@@ -14,7 +14,10 @@ void ConnectionThread::run()
     while (running && !closed)
     {
         auto request = connectionHandler->getRequest();
-//        std::cout<<this->user<<" sent request: "<<request<<'\n';
+
+        if (request != REPEAT)
+            std::cout<<this->user<<" sent request: "<<request<<'\n';
+
         switch (request) {
             case C_OPEN_FILE:      openFile();         break;
             case C_READ_FILE:      readFile();         break;
@@ -83,6 +86,9 @@ void ConnectionThread::openFile()
         }catch(FileNotPermitted& exception){
             header.param1 = FILE_NOT_PERMITED;
             header.param2 = 0;
+        }catch(FileNotOpened& exception) {
+            header.param1 = OTHER_ERROR;
+            header.param2 = 0;
         }
     }else{
         header.param1 = INVALID_FLAG_VALUE;
@@ -129,6 +135,9 @@ void ConnectionThread::readFile()
     // Send response
     connectionHandler->setData(data, dataSize);
     connectionHandler->sendReply(S_READ_FILE, header.param1, header.param2);
+
+    delete data;
+    data = nullptr;
 }
 
 void ConnectionThread::writeFile()

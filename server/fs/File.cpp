@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <iostream>
 #include "File.h"
 
 #include "../ServerExceptions.h"
@@ -12,6 +13,7 @@ File::File(const std::string &diskPath, const std::string &filePath, int flags, 
         flag = flag | O_RDWR;
     }
     if((descriptor = open(fullPath.c_str(), flag)) == -1){
+        std::cout << fullPath << '\n';
         throw FileNotOpened();
     }
     filesMonitor.add(filePath, user);

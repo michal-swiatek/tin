@@ -4,7 +4,7 @@
 void FileManager::init(const std::string& diskPathParam, const std::string& diskNameParam, const std::string& filesOwnersFileNameParam) {
     // Prepare paths
     this->filesOwnersFileName = filesOwnersFileNameParam;
-    this->diskPath = diskPathParam;
+    this->diskPath = diskPathParam + diskNameParam;
     this->diskName = diskNameParam;
     filesOwnersFilePath = diskPathParam + filesOwnersFileNameParam;
     // Check if paths are valid
@@ -37,7 +37,7 @@ void FileManager::init(const std::string& diskPathParam, const std::string& disk
     }
 
     // Check if all files were added and if not add them with empty ownership
-    listFilesRecursively(this->diskPath+this->diskName);
+    listFilesRecursively(this->diskPath);
 }
 
 void FileManager::listFilesRecursively(const std::string &basePath) {

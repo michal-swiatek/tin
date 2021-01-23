@@ -15,21 +15,22 @@ int main() {
     std::cout<<"Open session: "<<mynfs_strerror(client->mynfs_error)<<'\n';
 
 
-//    int desc = client->mynfs_open("/23.txt", Client::O_RW);
-//
-//    std::cout<<desc<<'\n';
-//
-//    std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
-//
-//
-//
-//
-//
-//    client->mynfs_close(desc);
-//
-//    std::cout<<"Close file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
+    int desc = client->mynfs_open("/2.txt", Client::O_RW);
 
-    sleep(10);
+    std::cout<<desc<<'\n';
+
+    std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
+
+    char letters[5] = "dupa";
+    auto ret = client->mynfs_read(desc, letters, 5);
+
+    std::cout << ret << ' ' << letters << '\n';
+
+    client->mynfs_close(desc);
+
+    std::cout<<"Close file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
+
+//    sleep(10);
 
     client->mynfs_closesession();
 
