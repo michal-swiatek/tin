@@ -18,7 +18,7 @@ enum Errors {
 
     BAD_LOGIN=5,
 
-    FOLDER_NOT_EXISTS=6,
+    DIRECTORY_END_REACHED=6,
 
     FILE_NOT_PERMITED=7,
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 #include "FileManager.h"
 
 void FileManager::init(const std::string& diskPathParam, const std::string& diskNameParam, const std::string& filesOwnersFileNameParam) {
@@ -54,7 +55,7 @@ void FileManager::listFilesRecursively(const std::string &basePath) {
             if (dp->d_type == DT_DIR) {
                 listFilesRecursively(tempPath);
             } else if (dp->d_type == DT_REG) {
-                std::string filePath = tempPath.substr(tempPath.find(diskPath+diskName) + diskPath.length()+diskName.length());
+                std::string filePath = tempPath.substr(tempPath.find(diskPath) + diskPath.length());
                 try {
                     filesOwners.at(filePath);
                 } catch (std::out_of_range &e) {
@@ -102,13 +103,14 @@ void FileManager::unlinkFile(const std::string &path, const std::string &user) {
     try {
         if (filesOwners.at(path) == user) {
             std::string fullPath = diskPath + path;
-            if (unlink(fullPath.c_str()) == 0) {
+            if ( unlink(fullPath.c_str()) == 0 ) {
                 filesOwners.erase(path);
             }else{
                 throw FileNotUnlinked();
             }
+        }else{
+            throw FileNotPermitted();
         }
-        throw FileNotPermitted();
     }
     catch (std::out_of_range &e) {
         throw FileNotExist();

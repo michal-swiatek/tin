@@ -3,14 +3,17 @@
 
 #include <sys/types.h>
 
+static const int MAX_PATH_LEN = 64;
+static const int MAX_USERNAME_LEN = 64;
+
 struct FileStat{
-    off_t     size;    /* total size, in bytes */
-    blksize_t blksize; /* blocksize for file system I/O */
-    blkcnt_t  blocks;  /* number of 512B blocks allocated */
-    time_t    atime;   /* time of last access */
-    time_t    mtime;   /* time of last modification */
-    time_t    ctime;   /* time of last status change */
+    off_t     size;               /* total size, in bytes */
+    time_t    lastAccess;         /* time of last access */
+    time_t    lastModification;   /* time of last modification */
+    time_t    lastStatusChange;   /* time of last status change */
     int flag;
+    char filePath[MAX_PATH_LEN];
+    char owner[MAX_USERNAME_LEN];
 };
 
 #endif //TIN_FILESTAT_H

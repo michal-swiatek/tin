@@ -1,5 +1,6 @@
 #include <fcntl.h>
 #include <iostream>
+#include <cstring>
 #include "File.h"
 
 #include "../ServerExceptions.h"
@@ -47,11 +48,11 @@ int File::fstat(FileStat* fileStat) const {
     int ret = ::fstat(this->descriptor, stat);
 
     fileStat->size = stat->st_size;
-    fileStat->blksize = stat->st_blksize;
-    fileStat->blocks = stat->st_blocks;
-    fileStat->atime = stat->st_atime;
-    fileStat->ctime = stat->st_ctime;
-    fileStat->mtime = stat->st_mtime;
+    memcpy(fileStat->filePath, this->path.c_str(), this->path.size());
+    memcpy(fileStat->owner, this->user.c_str(), this->user.size());
+    fileStat->lastAccess = stat->st_atime;
+    fileStat->lastStatusChange = stat->st_ctime;
+    fileStat->lastModification = stat->st_mtime;
 
     fileStat->flag = this->flags;
 

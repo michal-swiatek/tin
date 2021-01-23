@@ -276,14 +276,13 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
     }
 }
 
-int Client::mynfs_lseek(int fd, int offset, int whence) {
+int Client::mynfs_lseek(int fd, int offset, Whence whence) {
     Header header{};
     header.command = C_FILE_LSEEK;
     header.param1 = offset;
     header.param2 = fd;
     header.size = sizeof(whence)/sizeof(char);
-
-    std::vector<char> data(&whence, &whence + sizeof(whence)/sizeof(char));
+    std::vector<char> data((char*)&whence, (char*)&whence+header.size);
 
     sendMessage(header, data);
 
@@ -434,9 +433,9 @@ int Client::mynfs_fstat(int fd, FileStat *buf) {
     readMessage(header, data);
 
 
-    if( header.command == S_FILE_STAT) {
+    if( header.command == S_FILE_STAT ) {
         if( header.param1 == NO_ERROR && header.param2 == sizeof(FileStat) ){
-            memcpy(buf, data.data(), header.param2);
+            memcpy(buf, data.data(), header.size);
             return 0;
         } else if( header.param1 == INVALID_DESCRIPTOR ){
             mynfs_error = INVALID_DESCRIPTOR;
@@ -532,6 +531,9 @@ char *Client::mynfs_readdir(int dir_fd){
             return fileName;
         } else if( header.param1 == INVALID_DESCRIPTOR ){
             mynfs_error = INVALID_DESCRIPTOR;
+            return nullptr;
+        } else if( header.param1 == DIRECTORY_END_REACHED ){
+            mynfs_error = DIRECTORY_END_REACHED;
             return nullptr;
         } else {
             mynfs_error = OTHER_ERROR;
@@ -720,7 +722,7 @@ const char *mynfs_strerror(Errors error) {
         case INVALID_DESCRIPTOR:        return "INVALID_DESCRIPTOR";
         case INVALID_FLAG_VALUE:        return "INVALID_FLAG_VALUE";
         case BAD_LOGIN:                 return "BAD_LOGIN";
-        case FOLDER_NOT_EXISTS:         return "FOLDER_NOT_EXISTS";
+        case DIRECTORY_END_REACHED:     return "DIRECTORY_END_REACHED";
         case FILE_NOT_PERMITED:         return "FILE_NOT_PERMITED";
         case FILE_WRITE_ONLY:           return "FILE_WRITE_ONLY";
         case FILE_READ_ONLY:            return "FILE_READ_ONLY";

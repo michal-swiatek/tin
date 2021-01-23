@@ -27,7 +27,6 @@ public:
     //zwraca typ użytkownika: "a", "u" lub " " gsy użytkownik nie istnieje
     string userRole(string user);
     bool logOut(string user);
-
 };
 
 #endif //TIN_AUTHORIZATION_H

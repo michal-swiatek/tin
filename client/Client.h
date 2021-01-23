@@ -26,13 +26,19 @@ public:
         O_CR = O_CREAT
     };
 
+    enum Whence{
+        S_SET = SEEK_SET,
+        S_CUR = SEEK_CUR,
+        S_END = SEEK_END
+    };
+
     Client();
     ~Client();
     int mynfs_open(char* path, FileFlag oflag );
 
     int mynfs_read(int fd, char *buf, int size);
     int mynfs_write(int fd, const char *buf, int size);
-    int mynfs_lseek(int fd, int offset, int whence);
+    int mynfs_lseek(int fd, int offset, Whence whence);
     int mynfs_close(int fd);
     int mynfs_unlink(char* path);
     int mynfs_fstat(int fd, FileStat *buf);

@@ -15,8 +15,8 @@ void ConnectionThread::run()
     {
         auto request = connectionHandler->getRequest();
 
-        if (request != REPEAT)
-            std::cout<<this->user<<" sent request: "<<request<<'\n';
+//        if (request != REPEAT)
+//            std::cout<<this->user<<" sent request: "<<request<<'\n';
 
         switch (request) {
             case C_OPEN_FILE:      openFile();         break;
@@ -88,6 +88,9 @@ void ConnectionThread::openFile()
             header.param2 = 0;
         }catch(FileNotOpened& exception) {
             header.param1 = OTHER_ERROR;
+            header.param2 = 0;
+        }catch(FileAlreadyOpened& exception){
+            header.param1 = FILE_NOT_PERMITED;
             header.param2 = 0;
         }
     }else{
@@ -181,7 +184,7 @@ void ConnectionThread::fileStat()
     File* file;
     FileStat* fileStat = nullptr;
     try{
-        file = filesFromFd.at(header.param2);
+        file = filesFromFd.at(header.param1);
         fileStat = new FileStat();
         int res = file->fstat(fileStat);
         if(res < 0){
@@ -200,6 +203,8 @@ void ConnectionThread::fileStat()
     // Send response
     connectionHandler->setData(data, dataSize);
     connectionHandler->sendReply(S_FILE_STAT, header.param1, header.param2);
+
+    delete(fileStat);
 }
 
 void ConnectionThread::fileSeek()
@@ -319,6 +324,9 @@ void ConnectionThread::readDirectory()
         dataSize = header.param2;
     }catch (std::out_of_range& exception){
         header.param1 = INVALID_DESCRIPTOR;
+        header.param2 = 0;
+    }catch (DirectoryEndReached& exception){
+        header.param1 = DIRECTORY_END_REACHED;
         header.param2 = 0;
     }
     // Send response

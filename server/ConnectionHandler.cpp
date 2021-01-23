@@ -5,6 +5,8 @@
 #include "ConnectionHandler.h"
 
 #include <unistd.h>
+#include <cstdio>
+#include <cstdlib>
 
 #include <cstring>
 #include <iostream>
@@ -41,21 +43,51 @@ void ConnectionHandler::sendReply(bool clearData)
     if (clearData)
         data.clear();
 
-    //  TODO: Create send loop
+    char buffer[1024];
 
-    int replySize = dataSize() + sizeof(header);
-    char buffer[replySize];
+    int bytesSent;
+    int offset = 0;
 
     header.size = dataSize();
 
-    memcpy(buffer, &header, sizeof(header));
-    memcpy(buffer, data.data(), dataSize());
+    while ((bytesSent = send(connectionFd, (&header) + offset, sizeof(header) - offset, 0)) > 0)
+    {
+        if (bytesSent == -1)
+        {
+            perror(std::string("Error: Sending with socker: "+std::to_string(connectionFd)).c_str());
+            return;
+        }
 
-    int ret = send(connectionFd, buffer, replySize, 0);
-    if (ret == 0)
-        perror("Writing empty connection socket");
-    else if (ret < 0)
-        perror("Writing on connection socket");
+        offset += bytesSent;
+
+        if (offset >= sizeof(header))
+            break;
+    }
+
+    int totalBytesToSend = header.size;
+    int currBytesToSend = sizeof(buffer);
+    int bytesOffset = 0;
+    if(totalBytesToSend > 0) {
+        while (totalBytesToSend > 0) {
+            if (totalBytesToSend < sizeof(buffer)) {
+                currBytesToSend = totalBytesToSend;
+            }
+
+            memcpy(buffer, data.data() + bytesOffset, currBytesToSend);
+
+            bytesSent = send(connectionFd, buffer, currBytesToSend, 0);
+
+            if (bytesSent == -1) {
+                perror(std::string("Error: Sending with socker: "+std::to_string(connectionFd)).c_str());
+                return;
+            }
+
+            bytesOffset += bytesSent;
+
+            totalBytesToSend -= bytesSent;
+
+        }
+    }
 }
 
 void ConnectionHandler::sendRequest(bool clearData)
