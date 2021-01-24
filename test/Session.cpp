@@ -255,7 +255,7 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
         else    ret = upload(tokens[1], tokens[2]);
     }
     else if (command == "list") {
-        if (tokens.size() != 2)     std::cout << "Invalid command\n";
+        if (tokens.size() != 1)     std::cout << "Invalid command\n";
         else {
             auto print = [](const auto& elem) { std::cout << elem << ' '; };
 
@@ -349,7 +349,7 @@ void Session::printHelp()
     std::cout << "unlink fd                     - remove file from disk\n\n";
 
     std::cout << "read fd size                  - read size bytes from file associated with file descriptor\n";
-    std::cout << "write fd size                 - write size bytes to file associated with file descriptor\n";
+    std::cout << "write fd message              - write size bytes to file associated with file descriptor\n";
     std::cout << "lseek fd offset whence        - \n";
     std::cout << "fstat fd                      - \n\n";
 
