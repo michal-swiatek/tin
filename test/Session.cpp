@@ -4,9 +4,12 @@
 
 #include "Session.h"
 
+#include <sys/stat.h>
+
 #include <memory>
 #include <cstring>
 #include <sstream>
+#include <fstream>
 #include <iostream>
 
 Session::Session(Client *client) : client(client) {}
@@ -243,6 +246,14 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
             }
         }
     }
+    else if (command == "download") {
+        if (tokens.size() != 3)     std::cout << "Invalid command\n";
+        else    ret = download(tokens[1], tokens[2]);
+    }
+    else if (command == "upload") {
+        if (tokens.size() != 3)     std::cout << "Invalid command\n";
+        else    ret = upload(tokens[1], tokens[2]);
+    }
     else if (command == "list") {
         if (tokens.size() != 2)     std::cout << "Invalid command\n";
         else {
@@ -264,28 +275,92 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
         std::cout << mynfs_strerror(client->mynfs_error) << '\n';
 }
 
+int Session::download(const std::string &serverSrc, const std::string &localDest)
+{
+    int fd = client->mynfs_open(const_cast<char *>(serverSrc.c_str()), Client::O_RO);
+
+    if (fd != -1)
+    {
+        FileStat stat{};
+        int ret = client->mynfs_fstat(fd, &stat);
+
+        if (ret != -1)
+        {
+            std::ofstream file(localDest);
+
+            if (!file.good())
+            {
+                std::cout << "Could not open local file\n";
+                return 0;
+            }
+
+            auto buffer = std::unique_ptr<char[]>(new char[stat.size]);
+            ret = client->mynfs_read(fd, buffer.get(), stat.size);
+
+            if (ret != -1)
+            {
+                file.write(buffer.get(), stat.size);
+
+                return client->mynfs_close(fd);
+            }
+        }
+    }
+
+    return -1;
+}
+
+int Session::upload(const std::string &localSrc, const std::string &serverDest)
+{
+    int fd = client->mynfs_open(const_cast<char *>(serverDest.c_str()), Client::O_CR);
+
+    if (fd != -1)
+    {
+        std::ifstream file(localSrc);
+
+        if (!file.good())
+        {
+            std::cout << "Could not open local file\n";
+            return 0;
+        }
+
+        struct stat st{};
+        stat(localSrc.c_str(), &st);
+
+        auto buffer = std::unique_ptr<char[]>(new char[st.st_size]);
+        file.read(buffer.get(), st.st_size);
+
+        if (client->mynfs_write(fd, buffer.get(), st.st_size) != -1)
+            return client->mynfs_close(fd);
+    }
+
+    return -1;
+}
+
 void Session::printHelp()
 {
     std::cout << std::endl;
 
     std::cout << "List of possible commands:\n";
-    std::cout << "help (h)                  - print help\n\n";
+    std::cout << "help (h)                      - print help\n\n";
 
-    std::cout << "open filePath flag        - opens file at filePath and returns file descriptor\n";
-    std::cout << "                            available flags: O_RDONLY, O_WRONLY, O_RDWR, O_CREAT\n";
-    std::cout << "close fd                  - close file with associated file descriptor\n";
-    std::cout << "unlink fd                 - remove file from disk\n\n";
+    std::cout << "open filePath flag            - opens file at filePath and returns file descriptor\n";
+    std::cout << "                                available flags: O_RDONLY, O_WRONLY, O_RDWR, O_CREAT\n";
+    std::cout << "close fd                      - close file with associated file descriptor\n";
+    std::cout << "unlink fd                     - remove file from disk\n\n";
 
-    std::cout << "read fd size              - read size bytes from file associated with file descriptor\n";
-    std::cout << "write fd size             - write size bytes to file associated with file descriptor\n";
-    std::cout << "lseek fd offset whence    - \n";
-    std::cout << "fstat fd                  - \n\n";
+    std::cout << "read fd size                  - read size bytes from file associated with file descriptor\n";
+    std::cout << "write fd size                 - write size bytes to file associated with file descriptor\n";
+    std::cout << "lseek fd offset whence        - \n";
+    std::cout << "fstat fd                      - \n\n";
 
-    std::cout << "opendir path              - open directory at given path and return directory descriptor\n";
-    std::cout << "closedir path             - close directory at given directory descriptor\n";
-    std::cout << "readdir fd                - read directory associated with given directory descriptor\n\n";
+    std::cout << "opendir path                  - open directory at given path and return directory descriptor\n";
+    std::cout << "closedir path                 - close directory at given directory descriptor\n";
+    std::cout << "readdir fd                    - read directory associated with given directory descriptor\n\n";
 
-    std::cout << "list                      - list all opened file and directory descriptors\n\n";
+    std::cout << "download serverSrc localDest  - download file from serverSrc and store it in localSrc\n";
+    std::cout << "upload localSrc serverDest    - upload file from localSrc to serverDest\n\n";
 
-    std::cout << "quit (q)                  - close interactive session\n";
+    std::cout << "list                          - list all opened file and directory descriptors\n\n";
+
+    std::cout << "quit (q)                      - close interactive session\n";
 }

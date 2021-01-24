@@ -23,6 +23,9 @@ public:
     static std::vector<std::string> parseLine(const std::string& line);
 
 private:
+    int download(const std::string& serverSrc, const std::string& localDest);
+    int upload(const std::string& localSrc, const std::string& serverDest);
+
     static void printHelp();
 
     Client* client = nullptr;
