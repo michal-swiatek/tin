@@ -46,7 +46,7 @@ public:
 
     char* mynfs_readdir(int dir_fd);
     int mynfs_closedir(int dir_fd);
-    int mynfs_opensession(char *host, char *login, char *passwd);
+    int mynfs_opensession(const char *host, const char *login, const char *passwd);
 
     int mynfs_closesession();
 

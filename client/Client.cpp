@@ -13,7 +13,7 @@ Client::Client() {
 
 Client::~Client()= default;
 
-int Client::mynfs_opensession(char *host, char *login, char *passwd){
+int Client::mynfs_opensession(const char *host, const char *login, const char *passwd){
 
     struct sockaddr_in serv_addr{};
 
