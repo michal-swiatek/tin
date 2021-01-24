@@ -30,21 +30,10 @@ void ConnectionThread::run()
             case C_READ_DIR:       readDirectory();    break;
             case C_CLOSE_DIR:      closeDirectory();   break;
             case C_DISCONNECT:     closeConnection();  break;
-            case C_CONNECT:                            break;// TODO: co tutaj?
             case REPEAT:                               break;
 
-            // TODO: nieznana komenda - obsluga
-            case S_DISCONNECT:
-            case S_OPEN_FILE:
-            case S_READ_FILE:
-            case S_WRITE_FILE:
-            case S_UNLINK_FILE:
-            case S_FILE_STAT:
-            case S_FILE_LSEEK:
-            case S_CLOSE_FILE:
-            case S_CLOSE_DIR:
             default:
-                break;
+                closeConnection();
         }
     }
 

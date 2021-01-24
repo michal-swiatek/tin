@@ -29,12 +29,24 @@ int main() {
     char buf[6];
     buf[5] = '\0';
 
-    client->mynfs_read(desc, buf, 5);
+    client->mynfs_read(desc, buf, 2);
+
+    std::cout << desc << ' ' << buf << '\n';
+
+    client->mynfs_read(desc, buf, 2);
 
     std::cout << desc << ' ' << buf << '\n';
 
     int n;
     std::cin >> n;
+
+    if (client->mynfs_read(desc, buf, 3) == -1)
+    {
+        std::cout << mynfs_strerror(client->mynfs_error) << '\n';
+        exit(1);
+    }
+
+    std::cout << desc << ' ' << buf << '\n';
 
 //    std::cout<<"Open session: "<<mynfs_strerror(client->mynfs_error)<<'\n';
 
@@ -60,9 +72,12 @@ int main() {
 
 //    sleep(20);
 
-    client->mynfs_closesession();
+    if (n == 0)
+        client->mynfs_closesession();
 
 //    std::cout<<"Close session: "<<mynfs_strerror(client->mynfs_error)<<'\n';
+
+    std::cout << "Koniec\n";
 
     return 0;
 }
