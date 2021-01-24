@@ -62,9 +62,10 @@ void CommandLineParser::printHelp()
     std::cout << "List of available commands:\n\n";
 
     std::cout << "-ip\tREQUIRED, ipv4 address of server to connect\n";
-    std::cout << "-session\tOPTIONAL, creates an interactive session\n\n";
+    std::cout << "-session\tOPTIONAL, creates an interactive session\n";
+    std::cout << "-v\tOPTIONAL, in non-interactive mode outputs commands\n\n";
 
     std::cout << "Following commands are required only when using non-interactive session:\n";
     std::cout << "-login\tREQUIRED, login used to connect to server, user will be prompted for password\n";
-    std::cout << "-command\tREQUIRED, single command to be executed in non-interactive session\n";
+    std::cout << "-commands\tREQUIRED, commands to be executed in non-interactive session, separated by coma\n";
 }

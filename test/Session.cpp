@@ -394,5 +394,5 @@ void Session::printHelp()
 
     std::cout << "Commands can contain special characters that will be substituted during parsing:\n";
     std::cout << "Use $N to get Nth acquired file descriptor, eg. $1 - first acquired file descriptor\n";
-    std::cout << "Use #N to get Nth acquired directory descriptor, eg. #2 - second acquired directory descriptor\n";
+    std::cout << "Use #N to get Nth acquired directory descriptor, eg. #2 - second acquired directory descriptor\n\n";
 }

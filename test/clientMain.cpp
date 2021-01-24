@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     else
     {
         auto login = parser.getParam("-login", true);
-        auto commands = parser.getParam("-command", true);
+        auto commands = parser.getParam("-commands", true);
         auto verbose = parser.commandPresent("-v");
         std::string password;
 
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
             auto command = commands.substr(0, pos);
 
             if (verbose)
-                std::cout << command << '\n';
+                std::cout << ">> " <<  command << '\n';
 
             auto tokens = session.parseLine(command);
             session.executeCommand(tokens);
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
         auto command = commands.substr(0, pos);
 
         if (verbose)
-            std::cout << command << '\n';
+            std::cout << ">> "  << command << '\n';
 
         auto tokens = session.parseLine(command);
         session.executeCommand(tokens);
