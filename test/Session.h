@@ -20,7 +20,7 @@ public:
 
     void executeCommand(const std::vector<std::string>& tokens);
 
-    static std::vector<std::string> parseLine(const std::string& line);
+    std::vector<std::string> parseLine(const std::string& line);
 
 private:
     int download(const std::string& serverSrc, const std::string& localDest);

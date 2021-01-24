@@ -38,7 +38,20 @@ std::vector<std::string> Session::parseLine(const std::string& line)
     auto sstr = std::stringstream(line);
 
     while (sstr >> token)
+    {
+        //  Replace special characters
+        try {
+            if (token[0] == '$')
+                token = std::to_string(*std::next(fileDescriptors.begin(), std::stoi(token.substr(1)) - 1));
+            else if (token[0] == '#')
+                token = std::to_string(*std::next(directoryDescriptors.begin(), std::stoi(token.substr(1)) - 1));
+        }
+        catch (std::invalid_argument& e) {
+            std::cout << "Invalid substitution argument: " << e.what() << '\n';
+        }
+
         tokens.emplace_back(token);
+    }
 
     return tokens;
 }
@@ -362,5 +375,10 @@ void Session::printHelp()
 
     std::cout << "list                          - list all opened file and directory descriptors\n\n";
 
-    std::cout << "quit (q)                      - close interactive session\n";
+    std::cout << "quit (q)                      - close interactive session\n\n\n";
+
+
+    std::cout << "Commands can contain special characters that will be substituted during parsing:\n";
+    std::cout << "Use $N to get Nth acquired file descriptor, eg. $1 - first acquired file descriptor\n";
+    std::cout << "Use #N to get Nth acquired directory descriptor, eg. #2 - second acquired directory descriptor\n";
 }
