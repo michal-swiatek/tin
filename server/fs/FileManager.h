@@ -3,6 +3,7 @@
 
 #include <dirent.h>
 
+#include <memory>
 #include <fstream>
 #include <unordered_map>
 
@@ -11,6 +12,7 @@
 #include "FilesMonitor.h"
 #include "FilesExceptions.h"
 #include "../ServerExceptions.h"
+#include "../authorization/Authorization.h"
 
 class FileManager
 {
@@ -21,7 +23,8 @@ public:
         return manager;
     }
 
-    void init(const std::string& diskPathParam, const std::string& diskNameParam, const std::string& filesOwnersFileNameParam);
+    void init(const std::string& diskPathParam, const std::string& diskNameParam,
+              const std::string& filesOwnersFileNameParam, std::shared_ptr<Authorization> ptr);
     void end();
 
     File* getFile(const std::string &path, int flags, const std::string& user);
@@ -47,6 +50,7 @@ private:
     DirectoriesMonitor openedDirectories;
 
     OwnerTable filesOwners;
+    std::shared_ptr<Authorization> authorization;
 
     std::string diskPath;
     std::string diskName;

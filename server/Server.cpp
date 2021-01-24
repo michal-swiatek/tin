@@ -19,6 +19,7 @@
 
 Server::Server(int connections, const char* ipv4) : connections(connections),
                                                     ipv4(ipv4),
+                                                    authorization(std::make_shared<Authorization>()),
                                                     fm(FileManager::getInstance()) { }
 
 void Server::setup()
@@ -64,7 +65,7 @@ void Server::setup()
     //
     //  Setup FilesManager
     //
-    fm.init("./", "disk", "filesOwners.txt");
+    fm.init("./", "disk", "filesOwners.txt", authorization);
 }
 
 void Server::close()
@@ -109,7 +110,7 @@ void Server::run()
                 std::string login(data, header.param1);
                 std::string password(data + header.param1, header.param2);
 
-                if (authorization.login(login, password)){
+                if (authorization->login(login, password)){
                     std::cout << "Udalo sie zalogowac!\n";
 
                     connectionHandler->setHeader(S_CONNECT, NO_ERROR, 0);

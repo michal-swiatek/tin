@@ -30,7 +30,7 @@ private:
     int socketFd{};
     FileManager& fm;
 
-    Authorization authorization{};
+    std::shared_ptr<Authorization> authorization;
 
     std::atomic<bool> running = true;
     std::vector<std::unique_ptr<ConnectionThread>> threads;
@@ -39,7 +39,7 @@ private:
     static void printHelp();
 
     //  Info
-    int port;
+    int port{};
     std::string address;
 };
 
