@@ -39,6 +39,7 @@ int main(int argc, char** argv) {
     else
     {
         auto login = parser.getParam("-login", true);
+        auto command = parser.getParam("-command", true);
         std::string password;
 
         std::cout << "Enter password:"; std::cin >> password;
@@ -49,7 +50,7 @@ int main(int argc, char** argv) {
             exit(0);
         }
 
-        auto tokens = Session::parseLine(parser.getParam("-command"));
+        auto tokens = Session::parseLine(command);
         session.executeCommand(tokens);
     }
 
