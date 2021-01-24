@@ -208,7 +208,6 @@ void closedir_correct();
 //próba zamknięcia katalogu z podaniem błędnego deskryptora
 void closedir_incorrectDescriptor();
 /*********************************************************************************************************************/
-//TODO: ogólnie coś nie działa z tym testem - nie chce odczytać tekstu Uwaga - trzeba jeszcze lseek przestawić
 //stworz nowy plik i wpisz cos do niego, odczytaj co tam wpisales, zamknij, usun i proboj odczytac ponownie i ma byc bład ze juz nie ma pliku
 void user_createWriteReadCloseUnlinkfile_andTryToRead();
 #endif //TIN_TESTS_H
