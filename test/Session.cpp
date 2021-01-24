@@ -4,6 +4,7 @@
 
 #include "Session.h"
 
+#include <unistd.h>
 #include <sys/stat.h>
 
 #include <memory>
@@ -281,6 +282,18 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
             std::cout << '\n';
         }
     }
+    else if (command == "sleep") {
+        if (tokens.size() != 2)     std::cout << "Invalid command\n";
+        else {
+            try {
+                int seconds = std::stoi(tokens[1]);
+                sleep(seconds);
+            }
+            catch (std::invalid_argument &e) {
+                std::cout << "Invalid argument: " << e.what() << '\n';
+            }
+        }
+    }
     else
         std::cout << "Invalid command\n";
 
@@ -373,6 +386,7 @@ void Session::printHelp()
     std::cout << "download serverSrc localDest  - download file from serverSrc and store it in localSrc\n";
     std::cout << "upload localSrc serverDest    - upload file from localSrc to serverDest\n\n";
 
+    std::cout << "sleep seconds                 - sleep specified number of seconds\n";
     std::cout << "list                          - list all opened file and directory descriptors\n\n";
 
     std::cout << "quit (q)                      - close interactive session\n\n\n";
