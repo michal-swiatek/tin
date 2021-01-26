@@ -77,6 +77,7 @@ int main(int argc, char** argv) {
     }
 
     client->mynfs_closesession();
+    delete client;
 
     return 0;
 }
