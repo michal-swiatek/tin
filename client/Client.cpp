@@ -526,8 +526,9 @@ char *Client::mynfs_readdir(int dir_fd){
 
     if( header.command == S_READ_DIR) {
         if( header.param1 == NO_ERROR ){
-            char* fileName = new char[header.param2];
+            char* fileName = new char[header.param2 + 1];
             memcpy(fileName, data.data(), header.param2);
+            fileName[header.param2 ] = '\0';
             return fileName;
         } else if( header.param1 == INVALID_DESCRIPTOR ){
             mynfs_error = INVALID_DESCRIPTOR;
