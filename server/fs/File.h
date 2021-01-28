@@ -16,8 +16,9 @@ public:
 
     ~File();
 
-    File(const File&) = delete;
-    File& operator=(const File&) = delete;
+    File(const File &) = delete;
+
+    File &operator=(const File &) = delete;
 
     int read(char *buffer, int size) const;
 
@@ -25,7 +26,7 @@ public:
 
     int lseek(int offset, int whence) const;
 
-    int fstat(FileStat* fileStat) const;
+    int fstat(FileStat *fileStat) const;
 
     [[nodiscard]] inline int getFD() const { return descriptor; }
 

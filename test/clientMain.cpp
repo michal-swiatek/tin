@@ -5,7 +5,7 @@
 #include "CommandLineParser.h"
 #include "Session.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
 
     CommandLineParser parser(argc, argv);
 
@@ -13,40 +13,39 @@ int main(int argc, char** argv) {
     auto client = new NFSClient();
     auto session = Session(client);
 
-    if (parser.commandPresent("-session"))
-    {
+    if (parser.commandPresent("-session")) {
         std::string connect, login, password;
 
-        do
-        {
+        do {
             if (client->mynfs_error != NO_ERROR)
                 std::cout << mynfs_strerror(client->mynfs_error) << '\n';
 
-            std::cout << "Connect? (y/n):"; std::cin >> connect;
+            std::cout << "Connect? (y/n):";
+            std::cin >> connect;
 
             if (connect == "n")
                 exit(0);
             else if (connect != "y")
                 continue;
 
-            std::cout << "Enter login:";    std::cin >> login;
-            std::cout << "Enter password:"; std::cin >> password;
+            std::cout << "Enter login:";
+            std::cin >> login;
+            std::cout << "Enter password:";
+            std::cin >> password;
 
         } while (client->mynfs_opensession(host.c_str(), login.c_str(), password.c_str()) == -1);
 
         session.start();
-    }
-    else
-    {
+    } else {
         auto login = parser.getParam("-login", true);
         auto commands = parser.getParam("-commands", true);
         auto verbose = parser.commandPresent("-v");
         std::string password;
 
-        std::cout << "Enter password:"; std::cin >> password;
+        std::cout << "Enter password:";
+        std::cin >> password;
 
-        if (client->mynfs_opensession(host.c_str(), login.c_str(), password.c_str()) == -1)
-        {
+        if (client->mynfs_opensession(host.c_str(), login.c_str(), password.c_str()) == -1) {
             std::cout << mynfs_strerror(client->mynfs_error) << '\n';
             exit(0);
         }
@@ -56,7 +55,7 @@ int main(int argc, char** argv) {
             auto command = commands.substr(0, pos);
 
             if (verbose)
-                std::cout << ">> " <<  command << '\n';
+                std::cout << ">> " << command << '\n';
 
             auto tokens = session.parseLine(command);
             session.executeCommand(tokens);
@@ -68,7 +67,7 @@ int main(int argc, char** argv) {
         auto command = commands.substr(0, pos);
 
         if (verbose)
-            std::cout << ">> "  << command << '\n';
+            std::cout << ">> " << command << '\n';
 
         auto tokens = session.parseLine(command);
         session.executeCommand(tokens);

@@ -3,8 +3,8 @@
 #include <utility>
 #include "FileManager.h"
 
-void FileManager::init(const std::string& diskPathParam, const std::string& diskNameParam,
-                       const std::string& filesOwnersFileNameParam, std::shared_ptr<Authorization> ptr) {
+void FileManager::init(const std::string &diskPathParam, const std::string &diskNameParam,
+                       const std::string &filesOwnersFileNameParam, std::shared_ptr<Authorization> ptr) {
     // Prepare paths
     this->filesOwnersFileName = filesOwnersFileNameParam;
     this->diskPath = diskPathParam + diskNameParam;
@@ -80,24 +80,24 @@ void FileManager::end() {
 }
 
 
-File* FileManager::getFile(const std::string &path, int flags, const std::string &user) {
-    if (flags == O_CREAT){
-        try{
-            if(filesOwners.at(path) != user && authorization->userRole(user) != "a"){
+File *FileManager::getFile(const std::string &path, int flags, const std::string &user) {
+    if (flags == O_CREAT) {
+        try {
+            if (filesOwners.at(path) != user && authorization->userRole(user) != "a") {
                 throw FileNotPermitted();
             }
-        }catch (std::out_of_range& e){
+        } catch (std::out_of_range &e) {
             auto file = new File(diskPath, path, flags, user, openedFiles);
             filesOwners.insert({path, user});
             return file;
         }
     }
-    try{
-        if( filesOwners.at(path) != user && authorization->userRole(user) != "a"){
+    try {
+        if (filesOwners.at(path) != user && authorization->userRole(user) != "a") {
             throw FileNotPermitted();
         }
         return new File(diskPath, path, flags, user, openedFiles);
-    }catch (std::out_of_range& e){
+    } catch (std::out_of_range &e) {
         throw FileNotExist();
     }
 }
@@ -106,12 +106,12 @@ void FileManager::unlinkFile(const std::string &path, const std::string &user) {
     try {
         if (filesOwners.at(path) == user) {
             std::string fullPath = diskPath + path;
-            if ( unlink(fullPath.c_str()) == 0 ) {
+            if (unlink(fullPath.c_str()) == 0) {
                 filesOwners.erase(path);
-            }else{
+            } else {
                 throw FileNotUnlinked();
             }
-        }else{
+        } else {
             throw FileNotPermitted();
         }
     }
@@ -120,6 +120,6 @@ void FileManager::unlinkFile(const std::string &path, const std::string &user) {
     }
 }
 
-Directory* FileManager::getDirectory(const std::string &path, const std::string &user) {
+Directory *FileManager::getDirectory(const std::string &path, const std::string &user) {
     return new Directory(diskPath, path, user, openedDirectories);
 }

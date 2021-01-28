@@ -10,7 +10,7 @@ Directory::Directory(const std::string &diskPath, const std::string &dirPath, co
         : directoriesMonitor(directoriesMonitor), path(dirPath), user(user) {
     std::string fullPath = diskPath + dirPath;
     dir = opendir(fullPath.c_str());
-    if(dir == nullptr){
+    if (dir == nullptr) {
         throw DirectoryNotOpened();
     }
     descriptor = dirfd(dir);
@@ -22,7 +22,7 @@ Directory::~Directory() {
     directoriesMonitor.remove(path, user);
 }
 
-char* Directory::read() {
+char *Directory::read() {
     dirent *d;
     while ((d = ::readdir(this->dir)) != nullptr) {
         if (d->d_name != std::string(".") && d->d_name != std::string("..")) {

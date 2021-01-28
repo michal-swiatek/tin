@@ -13,8 +13,9 @@ public:
 
     ~Directory();
 
-    Directory(const Directory&) = delete;
-    Directory& operator=(const Directory&) = delete;
+    Directory(const Directory &) = delete;
+
+    Directory &operator=(const Directory &) = delete;
 
     char *read();
 

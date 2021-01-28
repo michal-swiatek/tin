@@ -106,6 +106,7 @@ void read_correct();
 //mynfs_sterror:
 //returned value: -1
 void read_incorrectOpenMode();
+
 //próba odczytanie pliku z podaniem błędnego deskryptora
 //mynfs_sterror: INVALID_DESCRIPTOR
 //returned value: -1
@@ -123,6 +124,7 @@ void read_emptyFile();
 //mynfs_sterror: NO_ERROR
 //returned value: liczba zapisanych znaków (3)
 void write_correct();
+
 //niepoprawna próba zapisu do pliku otwartego w trybie read only
 //mynfs_sterror:FILE_READ_ONLY
 //returned value: -1
@@ -138,12 +140,16 @@ void write_incorrectDescriptor();
 
 //odczyt z pliku pierwszego znaku tekstu, następnie zmiana kursora na początek pliku i odczytanie jeszcze raz tego samego znaku
 void lseek_returnToBeginningOfTheFile();
+
 //przesunięcie kursora na drugi znak w pliku i odczytanie drugiego znaku tekstu znajdującego się w pliku
 void lseek_skipFirstSignInFile();
+
 //odczytanie pierwszego znaku z pliku, następnie przesunięcie o 1 kursora od bieżącej pozycji i odczytanie trzeciego znaku z tekstu
 void lseek_skipSecondSignInFile();
+
 //wywołanie lseek z błędnym deskryptorem
 void lseek_incorectDescriptor();
+
 //przesuniecie kursora na koniec pliku i próba odczytu
 void lseek_endFile();
 
@@ -152,8 +158,10 @@ void lseek_endFile();
 
 //poprawne zamknięcie otwartego pliku
 void close_correct();
+
 //niepoprawne zamknięcie pliku z błędnym deskryptorem
 void close_incorrectDescriptor();
+
 //próba zamknięcia pliku przez użytkownika nie mającego go otwartego, gdy jest on otwarty przez innego użytkownika
 //mynfs_sterror: INVALID_DESCRIPTOR
 void close_SecondUserTryClose();
@@ -165,8 +173,10 @@ void close_SecondUserTryClose();
 
 //niepoprawna próba usunięcia pliku, przez użytkownika, który nie ma do pliku praw dostępu
 void unlink_noPermissionToFile();
+
 //usunięcie nieistniejącego pliku
 void unlink_fileNotExists();
+
 //próba usunięcia pliku, który jest otwarty przez drugiego użytkownika
 void unlink_otherUserHadOpenFile();
 
@@ -193,10 +203,13 @@ void opendir_pathNotExists();
 //testy do funkcji char *mynfs_readdir(int dir_fd);
 //poprawne odczytanie katalogu
 void readdir_correct();
+
 //niepoprawne odczytanie katalogu - błędny deskryptor
 void readdir_incorrectDescriptor();
+
 //odczytanie katalogu otwartego przez dwóch użytkowników w tym samym momencie
 void readdit_twoUsers();
+
 //odczytanie kilkukrotne tego samego katalogu, aż do osiągnięcia końca folderu
 void readdir_correctReadMultipleTimes();
 /*********************************************************************************************************************/
@@ -204,6 +217,7 @@ void readdir_correctReadMultipleTimes();
 
 //poprawne zamknięcie katalogu
 void closedir_correct();
+
 //próba zamknięcia katalogu z podaniem błędnego deskryptora
 void closedir_incorrectDescriptor();
 /*********************************************************************************************************************/
@@ -212,26 +226,38 @@ void user_createWriteReadCloseUnlinkfile_andTryToRead();
 /*********************************************************************************************************************/
 // Jeden użytkownik (dwóch o tych samym loginie i haśle) chce otworzyć dwa razy ten sam plik.
 void open_twice();
+
 // Użytkownik chce zamknąć plik otwarty przez innego użytkownika.
 void close_someone_elses_file();
+
 // Użytkownik chce usunąć plik otwarty przez innego użytkownika.
 void delete_opened_file();
+
 // Użytkownik próbuje otworzyć plik utworzony przez innego użytkownika.
 void open_someone_elses_file();
+
 // Uzytkownik próbuje czytać z pliku otwartego przez innego użytkownika.
 void read_opened_file();
+
 // Uzytkownik próbuje pisać do pliku otwartego przez innego użytkownika.
 void write_to_opened_file();
+
 // Kilku użytkowników na raz tworzy pliki i pisze do nich.
 void several_create_and_write();
+
 // Jeden użytkownik czyta katalog, a drugi w tym czasie tworzy w nim nowy plik.
 void reading_dir_during_changes();
+
 // Użytkownik próbuje zamknąć otwarty przez innego użytkownika katalog.
 void closing_opened_directory();
+
 // Użytkownik próbuje wykonać lseek na pliku otwartym przez innego użytkownika.
 void lseek_on_opened_file();
+
 // Użytkownik próbuje usunąć plik, który wcześniej został usunięty przez innego użytkownika.
 void delete_deleted_file();
+
 // Kilku klientów jednocześnie otwiera ten sam katalog.
 void several_users_opening_dir();
+
 #endif //TIN_TESTS_H

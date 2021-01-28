@@ -1,23 +1,22 @@
 #include "NFSClient.h"
 
 #include <arpa/inet.h>
-#include <iostream>
 #include <cstring>
 #include <string>
 #include <unistd.h>
 
 NFSClient::NFSClient() {
-    sockfd=-1;
+    sockfd = -1;
     mynfs_error = NO_ERROR;
 }
 
-NFSClient::~NFSClient()= default;
+NFSClient::~NFSClient() = default;
 
-int NFSClient::mynfs_opensession(const char *host, const char *login, const char *passwd){
+int NFSClient::mynfs_opensession(const char *host, const char *login, const char *passwd) {
 
     struct sockaddr_in serv_addr{};
 
-    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         this->mynfs_error = COULD_NOT_CREATE_SOCKET;
         return -1;
     }
@@ -27,7 +26,7 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(DEFAULT_PORT);
 
-    if(inet_pton(AF_INET, host, &serv_addr.sin_addr)<=0) {
+    if (inet_pton(AF_INET, host, &serv_addr.sin_addr) <= 0) {
         this->mynfs_error = INET_PTON_ERROR;
         return -1;
     }
@@ -35,11 +34,11 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
     struct timeval tv{};
     tv.tv_sec = CLIENT_RECV_TIMEOUT;
     tv.tv_usec = 0;
-    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char *) &tv, sizeof(tv));
     tv.tv_sec = CLIENT_SEND_TIMEOUT;
-    setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&tv, sizeof(tv));
+    setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char *) &tv, sizeof(tv));
 
-    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         this->mynfs_error = SERVER_ERROR;
         return -1;
     }
@@ -49,7 +48,7 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
 
     std::string log(login);
     std::string pas(passwd);
-    std::string logPas = log+pas;
+    std::string logPas = log + pas;
 
     header.size = logPas.size();
     header.param1 = log.size();
@@ -57,14 +56,14 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
 
     std::vector<char> data;
 
-    for( char c : logPas ){
+    for (char c : logPas) {
         data.emplace_back(c);
     }
 
     sendMessage(header, data);
 
-    if( header.command != C_CONNECT) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_CONNECT) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -75,19 +74,19 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
 
     readMessage(header, data);
 
-    if( header.command == S_CONNECT) {
-        if( header.param1 == NO_ERROR){
+    if (header.command == S_CONNECT) {
+        if (header.param1 == NO_ERROR) {
             return 0;
-        } else if( header.param1 == BAD_LOGIN ){
+        } else if (header.param1 == BAD_LOGIN) {
             mynfs_error = BAD_LOGIN;
             return -1;
-        } else if( header.param1 == INVALID_COMMAND ){
+        } else if (header.param1 == INVALID_COMMAND) {
             mynfs_error = INVALID_COMMAND;
             return -1;
-        } else if( header.param1 == CONNECTION_TIMEOUT ){
+        } else if (header.param1 == CONNECTION_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
-        } else{
+        } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
@@ -97,7 +96,7 @@ int NFSClient::mynfs_opensession(const char *host, const char *login, const char
     }
 }
 
-int NFSClient::mynfs_closesession(){
+int NFSClient::mynfs_closesession() {
     Header header{};
     header.command = C_DISCONNECT;
     header.param1 = 0;
@@ -108,8 +107,8 @@ int NFSClient::mynfs_closesession(){
 
     sendMessage(header, data);
 
-    if( header.command != C_DISCONNECT) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_DISCONNECT) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -120,15 +119,15 @@ int NFSClient::mynfs_closesession(){
 
     readMessage(header, data);
 
-    if( header.command == S_DISCONNECT) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_DISCONNECT) {
+        if (header.param1 == NO_ERROR) {
             close(sockfd);
             return 0;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -137,7 +136,7 @@ int NFSClient::mynfs_closesession(){
     }
 }
 
-int NFSClient::mynfs_open(char* path, FileFlag oflag ){
+int NFSClient::mynfs_open(char *path, FileFlag oflag) {
 
     std::string filePath(path);
 
@@ -149,14 +148,14 @@ int NFSClient::mynfs_open(char* path, FileFlag oflag ){
 
     std::vector<char> data;
 
-    for( char c : filePath ){
+    for (char c : filePath) {
         data.emplace_back(c);
     }
 
     sendMessage(header, data);
 
-    if( header.command != C_OPEN_FILE) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_OPEN_FILE) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -167,17 +166,18 @@ int NFSClient::mynfs_open(char* path, FileFlag oflag ){
 
     readMessage(header, data);
 
-    if( header.command == S_OPEN_FILE) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_OPEN_FILE) {
+        if (header.param1 == NO_ERROR) {
             return header.param2;
-        } else if( header.param1 == FILE_NOT_EXISTS || header.param1 == INVALID_FLAG_VALUE || header.param1 == FILE_NOT_PERMITED ){
+        } else if (header.param1 == FILE_NOT_EXISTS || header.param1 == INVALID_FLAG_VALUE ||
+                   header.param1 == FILE_NOT_PERMITED) {
             mynfs_error = static_cast<Errors>(header.param1);
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -186,7 +186,7 @@ int NFSClient::mynfs_open(char* path, FileFlag oflag ){
     }
 }
 
-int NFSClient:: mynfs_read(int fd, char *buf, int size){
+int NFSClient::mynfs_read(int fd, char *buf, int size) {
     Header header{};
     header.command = C_READ_FILE;
     header.param1 = size;
@@ -197,8 +197,8 @@ int NFSClient:: mynfs_read(int fd, char *buf, int size){
 
     sendMessage(header, data);
 
-    if( header.command != C_READ_FILE ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_READ_FILE) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -210,19 +210,19 @@ int NFSClient:: mynfs_read(int fd, char *buf, int size){
     readMessage(header, data);
 
 
-    if( header.command == S_READ_FILE) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_READ_FILE) {
+        if (header.param1 == NO_ERROR) {
             int dataSize = header.param2;
             memcpy(buf, data.data(), dataSize);
             return dataSize;
-        } else if( header.param1 == FILE_WRITE_ONLY || header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == FILE_WRITE_ONLY || header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = static_cast<Errors>(header.param1);
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -230,7 +230,6 @@ int NFSClient:: mynfs_read(int fd, char *buf, int size){
         return -1;
     }
 }
-
 
 
 int NFSClient::mynfs_write(int fd, const char *buf, int size) {
@@ -244,8 +243,8 @@ int NFSClient::mynfs_write(int fd, const char *buf, int size) {
 
     sendMessage(header, data);
 
-    if( header.command != C_WRITE_FILE ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_WRITE_FILE) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -257,17 +256,17 @@ int NFSClient::mynfs_write(int fd, const char *buf, int size) {
     readMessage(header, data);
 
 
-    if( header.command == S_WRITE_FILE) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_WRITE_FILE) {
+        if (header.param1 == NO_ERROR) {
             return header.param2;
-        } else if( header.param1 == FILE_READ_ONLY || header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == FILE_READ_ONLY || header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = static_cast<Errors>(header.param1);
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -281,13 +280,13 @@ int NFSClient::mynfs_lseek(int fd, int offset, Whence whence) {
     header.command = C_FILE_LSEEK;
     header.param1 = offset;
     header.param2 = fd;
-    header.size = sizeof(whence)/sizeof(char);
-    std::vector<char> data((char*)&whence, (char*)&whence+header.size);
+    header.size = sizeof(whence) / sizeof(char);
+    std::vector<char> data((char *) &whence, (char *) &whence + header.size);
 
     sendMessage(header, data);
 
-    if( header.command != C_FILE_LSEEK ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_FILE_LSEEK) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -299,17 +298,17 @@ int NFSClient::mynfs_lseek(int fd, int offset, Whence whence) {
     readMessage(header, data);
 
 
-    if( header.command == S_FILE_LSEEK) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_FILE_LSEEK) {
+        if (header.param1 == NO_ERROR) {
             return header.param2;
-        } else if( header.param1 == INVALID_FLAG_VALUE || header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == INVALID_FLAG_VALUE || header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = static_cast<Errors>(header.param1);
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -329,8 +328,8 @@ int NFSClient::mynfs_close(int fd) {
 
     sendMessage(header, data);
 
-    if( header.command != C_CLOSE_FILE) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_CLOSE_FILE) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -342,17 +341,17 @@ int NFSClient::mynfs_close(int fd) {
     readMessage(header, data);
 
 
-    if( header.command == S_CLOSE_FILE) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_CLOSE_FILE) {
+        if (header.param1 == NO_ERROR) {
             return 0;
-        } else if( header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = INVALID_DESCRIPTOR;
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -361,7 +360,7 @@ int NFSClient::mynfs_close(int fd) {
     }
 }
 
-int NFSClient::mynfs_unlink(char* path){
+int NFSClient::mynfs_unlink(char *path) {
     std::string filePath(path);
 
     Header header{};
@@ -372,14 +371,14 @@ int NFSClient::mynfs_unlink(char* path){
 
     std::vector<char> data;
 
-    for(char c : filePath){
+    for (char c : filePath) {
         data.emplace_back(c);
     }
 
     sendMessage(header, data);
 
-    if( header.command != C_UNLINK_FILE ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_UNLINK_FILE) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -390,17 +389,18 @@ int NFSClient::mynfs_unlink(char* path){
 
     readMessage(header, data);
 
-    if( header.command == S_UNLINK_FILE) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_UNLINK_FILE) {
+        if (header.param1 == NO_ERROR) {
             return 0;
-        } else if( header.param1 == FILE_NOT_EXISTS || header.param1 == FILE_NOT_PERMITED || header.param1 == FILE_NOT_UNLINKED ){
+        } else if (header.param1 == FILE_NOT_EXISTS || header.param1 == FILE_NOT_PERMITED ||
+                   header.param1 == FILE_NOT_UNLINKED) {
             mynfs_error = static_cast<Errors>(header.param1);
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -420,8 +420,8 @@ int NFSClient::mynfs_fstat(int fd, FileStat *buf) {
 
     sendMessage(header, data);
 
-    if( header.command != C_FILE_STAT ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_FILE_STAT) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -433,18 +433,18 @@ int NFSClient::mynfs_fstat(int fd, FileStat *buf) {
     readMessage(header, data);
 
 
-    if( header.command == S_FILE_STAT ) {
-        if( header.param1 == NO_ERROR && header.param2 == sizeof(FileStat) ){
+    if (header.command == S_FILE_STAT) {
+        if (header.param1 == NO_ERROR && header.param2 == sizeof(FileStat)) {
             memcpy(buf, data.data(), header.size);
             return 0;
-        } else if( header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = INVALID_DESCRIPTOR;
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -453,7 +453,7 @@ int NFSClient::mynfs_fstat(int fd, FileStat *buf) {
     }
 }
 
-int NFSClient::mynfs_opendir(char *path){
+int NFSClient::mynfs_opendir(char *path) {
     std::string dirPath(path);
 
     Header header{};
@@ -464,14 +464,14 @@ int NFSClient::mynfs_opendir(char *path){
 
     std::vector<char> data;
 
-    for(char c : dirPath){
+    for (char c : dirPath) {
         data.emplace_back(c);
     }
 
     sendMessage(header, data);
 
-    if( header.command != C_OPEN_DIR ) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_OPEN_DIR) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -482,26 +482,26 @@ int NFSClient::mynfs_opendir(char *path){
 
     readMessage(header, data);
 
-    if( header.command == S_OPEN_DIR) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_OPEN_DIR) {
+        if (header.param1 == NO_ERROR) {
             return header.param2;
-        } else if( header.param1 == DIRECTORY_NOT_OPENED ){
+        } else if (header.param1 == DIRECTORY_NOT_OPENED) {
             mynfs_error = DIRECTORY_NOT_OPENED;
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
-    }else {
+    } else {
         mynfs_error = SERVER_ERROR;
         return -1;
     }
 }
 
-char *NFSClient::mynfs_readdir(int dir_fd){
+char *NFSClient::mynfs_readdir(int dir_fd) {
     Header header{};
     header.command = C_READ_DIR;
     header.param1 = dir_fd;
@@ -512,8 +512,8 @@ char *NFSClient::mynfs_readdir(int dir_fd){
 
     sendMessage(header, data);
 
-    if( header.command != C_READ_DIR) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_READ_DIR) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return nullptr;
         } else {
@@ -524,23 +524,23 @@ char *NFSClient::mynfs_readdir(int dir_fd){
 
     readMessage(header, data);
 
-    if( header.command == S_READ_DIR) {
-        if( header.param1 == NO_ERROR ){
-            char* fileName = new char[header.param2 + 1];
+    if (header.command == S_READ_DIR) {
+        if (header.param1 == NO_ERROR) {
+            char *fileName = new char[header.param2 + 1];
             memcpy(fileName, data.data(), header.param2);
-            fileName[header.param2 ] = '\0';
+            fileName[header.param2] = '\0';
             return fileName;
-        } else if( header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = INVALID_DESCRIPTOR;
             return nullptr;
-        } else if( header.param1 == DIRECTORY_END_REACHED ){
+        } else if (header.param1 == DIRECTORY_END_REACHED) {
             mynfs_error = DIRECTORY_END_REACHED;
             return nullptr;
         } else {
             mynfs_error = OTHER_ERROR;
             return nullptr;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return nullptr;
     } else {
@@ -549,7 +549,7 @@ char *NFSClient::mynfs_readdir(int dir_fd){
     }
 }
 
-int NFSClient::mynfs_closedir(int dir_fd){
+int NFSClient::mynfs_closedir(int dir_fd) {
     Header header{};
     header.command = C_CLOSE_DIR;
     header.param1 = dir_fd;
@@ -560,8 +560,8 @@ int NFSClient::mynfs_closedir(int dir_fd){
 
     sendMessage(header, data);
 
-    if( header.command != C_CLOSE_DIR) {
-        if(header.command == REQUEST_TIMEOUT){
+    if (header.command != C_CLOSE_DIR) {
+        if (header.command == REQUEST_TIMEOUT) {
             mynfs_error = CONNECTION_TIMEOUT;
             return -1;
         } else {
@@ -572,17 +572,17 @@ int NFSClient::mynfs_closedir(int dir_fd){
 
     readMessage(header, data);
 
-    if( header.command == S_CLOSE_DIR) {
-        if( header.param1 == NO_ERROR ){
+    if (header.command == S_CLOSE_DIR) {
+        if (header.param1 == NO_ERROR) {
             return 0;
-        } else if( header.param1 == INVALID_DESCRIPTOR ){
+        } else if (header.param1 == INVALID_DESCRIPTOR) {
             mynfs_error = INVALID_DESCRIPTOR;
             return -1;
         } else {
             mynfs_error = OTHER_ERROR;
             return -1;
         }
-    } else if(header.command == REQUEST_TIMEOUT){
+    } else if (header.command == REQUEST_TIMEOUT) {
         mynfs_error = CONNECTION_TIMEOUT;
         return -1;
     } else {
@@ -591,23 +591,21 @@ int NFSClient::mynfs_closedir(int dir_fd){
     }
 }
 
-void NFSClient::sendMessage(Header& header, std::vector<char> &data) const {
+void NFSClient::sendMessage(Header &header, std::vector<char> &data) const {
     char buffer[1024];
 
     int bytesSent;
 
     int offset = 0;
 
-    while ((bytesSent = send(sockfd, (&header) + offset, sizeof(header) - offset, 0)) > 0)
-    {
-        if (bytesSent == -1)
-        {
+    while ((bytesSent = send(sockfd, (&header) + offset, sizeof(header) - offset, 0)) > 0) {
+        if (bytesSent == -1) {
             header.param1 = 0;
             header.param2 = 0;
             header.size = 0;
-            if(errno == EAGAIN || errno == EWOULDBLOCK){
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 header.command = REQUEST_TIMEOUT;
-            }else{
+            } else {
                 header.command = INVALID_REQUEST;
             }
             return;
@@ -621,25 +619,23 @@ void NFSClient::sendMessage(Header& header, std::vector<char> &data) const {
     int totalBytesToSend = header.size;
     int currBytesToSend = sizeof(buffer);
     int bytesOffset = 0;
-    if(totalBytesToSend > 0){
-        while (totalBytesToSend > 0)
-        {
-            if(totalBytesToSend < sizeof(buffer)){
+    if (totalBytesToSend > 0) {
+        while (totalBytesToSend > 0) {
+            if (totalBytesToSend < sizeof(buffer)) {
                 currBytesToSend = totalBytesToSend;
             }
 
-            memcpy(buffer, data.data()+bytesOffset, currBytesToSend);
+            memcpy(buffer, data.data() + bytesOffset, currBytesToSend);
 
             bytesSent = send(sockfd, buffer, currBytesToSend, 0);
 
-            if (bytesSent == -1)
-            {
+            if (bytesSent == -1) {
                 header.param1 = 0;
                 header.param2 = 0;
                 header.size = 0;
-                if(errno == EAGAIN || errno == EWOULDBLOCK){
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     header.command = REQUEST_TIMEOUT;
-                }else{
+                } else {
                     header.command = INVALID_REQUEST;
                 }
                 return;
@@ -665,16 +661,14 @@ void NFSClient::readMessage(Header &header, std::vector<char> &data) const {
 
     int offset = 0;
 
-    while ((bytesRead = recv(sockfd, (&header)+offset, sizeof(header)-offset, 0)) > 0)
-    {
-        if (bytesRead == -1)
-        {
+    while ((bytesRead = recv(sockfd, (&header) + offset, sizeof(header) - offset, 0)) > 0) {
+        if (bytesRead == -1) {
             header.param1 = 0;
             header.param2 = 0;
             header.size = 0;
-            if(errno == EAGAIN || errno == EWOULDBLOCK){
+            if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 header.command = REQUEST_TIMEOUT;
-            }else{
+            } else {
                 header.command = INVALID_REQUEST;
             }
             return;
@@ -687,17 +681,15 @@ void NFSClient::readMessage(Header &header, std::vector<char> &data) const {
     }
 
     bytesToRead = header.size;
-    if(bytesToRead > 0){
-        while ((bytesRead = recv(sockfd, buffer, sizeof(buffer), 0)) > 0)
-        {
-            if (bytesRead == -1)
-            {
+    if (bytesToRead > 0) {
+        while ((bytesRead = recv(sockfd, buffer, sizeof(buffer), 0)) > 0) {
+            if (bytesRead == -1) {
                 header.param1 = 0;
                 header.param2 = 0;
                 header.size = 0;
-                if(errno == EAGAIN || errno == EWOULDBLOCK){
+                if (errno == EAGAIN || errno == EWOULDBLOCK) {
                     header.command = REQUEST_TIMEOUT;
-                }else{
+                } else {
                     header.command = INVALID_REQUEST;
                 }
                 return;
@@ -715,26 +707,44 @@ void NFSClient::readMessage(Header &header, std::vector<char> &data) const {
 
 const char *mynfs_strerror(Errors error) {
     // TODO: lepsze komunikaty bledow
-    switch (error)
-    {
-        case NO_ERROR:                  return "NO_ERROR";
-        case OTHER_ERROR:               return "OTHER_ERROR";
-        case FILE_NOT_EXISTS:           return "FILE_NOT_EXISTS";
-        case INVALID_DESCRIPTOR:        return "INVALID_DESCRIPTOR";
-        case INVALID_FLAG_VALUE:        return "INVALID_FLAG_VALUE";
-        case BAD_LOGIN:                 return "BAD_LOGIN";
-        case DIRECTORY_END_REACHED:     return "DIRECTORY_END_REACHED";
-        case FILE_NOT_PERMITED:         return "FILE_NOT_PERMITED";
-        case FILE_WRITE_ONLY:           return "FILE_WRITE_ONLY";
-        case FILE_READ_ONLY:            return "FILE_READ_ONLY";
-        case FILE_NOT_UNLINKED:         return "FILE_NOT_UNLINKED";
-        case DIRECTORY_NOT_OPENED:      return "DIRECTORY_NOT_OPENED";
-        case INVALID_CONNECTION:        return "INVALID_CONNECTION";
-        case CONNECTION_TIMEOUT:        return "CONNECTION_TIMEOUT";
-        case COULD_NOT_CREATE_SOCKET:   return "COULD_NOT_CREATE_SOCKET";
-        case INET_PTON_ERROR:           return "INET_PTON_ERROR";
-        case INVALID_COMMAND:           return "INVALID_COMMAND";
-        case SERVER_ERROR:              return "SERVER_ERROR";
-        default:                        return "UNKNOWN_ERROR";
+    switch (error) {
+        case NO_ERROR:
+            return "NO_ERROR";
+        case OTHER_ERROR:
+            return "OTHER_ERROR";
+        case FILE_NOT_EXISTS:
+            return "FILE_NOT_EXISTS";
+        case INVALID_DESCRIPTOR:
+            return "INVALID_DESCRIPTOR";
+        case INVALID_FLAG_VALUE:
+            return "INVALID_FLAG_VALUE";
+        case BAD_LOGIN:
+            return "BAD_LOGIN";
+        case DIRECTORY_END_REACHED:
+            return "DIRECTORY_END_REACHED";
+        case FILE_NOT_PERMITED:
+            return "FILE_NOT_PERMITED";
+        case FILE_WRITE_ONLY:
+            return "FILE_WRITE_ONLY";
+        case FILE_READ_ONLY:
+            return "FILE_READ_ONLY";
+        case FILE_NOT_UNLINKED:
+            return "FILE_NOT_UNLINKED";
+        case DIRECTORY_NOT_OPENED:
+            return "DIRECTORY_NOT_OPENED";
+        case INVALID_CONNECTION:
+            return "INVALID_CONNECTION";
+        case CONNECTION_TIMEOUT:
+            return "CONNECTION_TIMEOUT";
+        case COULD_NOT_CREATE_SOCKET:
+            return "COULD_NOT_CREATE_SOCKET";
+        case INET_PTON_ERROR:
+            return "INET_PTON_ERROR";
+        case INVALID_COMMAND:
+            return "INVALID_COMMAND";
+        case SERVER_ERROR:
+            return "SERVER_ERROR";
+        default:
+            return "UNKNOWN_ERROR";
     }
 }

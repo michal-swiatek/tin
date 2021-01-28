@@ -13,22 +13,22 @@
 #include "authorization/Authorization.h"
 #include "ConnectionThread.h"
 
-class Server
-{
+class Server {
 public:
-    explicit Server(int connections, const char* ipv4 = nullptr);
+    explicit Server(int connections, const char *ipv4 = nullptr);
 
     void setup();
+
     void close();
 
     void run();
 
 private:
     int connections{};
-    const char* ipv4 = nullptr;
+    const char *ipv4 = nullptr;
 
     int socketFd{};
-    FileManager& fm;
+    FileManager &fm;
 
     std::shared_ptr<Authorization> authorization;
 
@@ -36,6 +36,7 @@ private:
     std::vector<std::unique_ptr<ConnectionThread>> threads;
 
     void uiThread();
+
     static void printHelp();
 
     //  Info

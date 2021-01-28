@@ -3,7 +3,7 @@
 
 // TODO: undefined command
 
-enum Request: char {
+enum Request : char {
     C_OPEN_FILE = 1,
     S_OPEN_FILE = 2,
 
@@ -29,7 +29,7 @@ enum Request: char {
     S_CONNECT = 16,
 
     C_DISCONNECT = 17,
-    S_DISCONNECT= 18,
+    S_DISCONNECT = 18,
 
     C_OPEN_DIR = 19,
     S_OPEN_DIR = 20,

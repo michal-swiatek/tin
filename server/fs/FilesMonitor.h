@@ -9,10 +9,10 @@ class FilesMonitor {
 public:
     void add(const std::string &file, const std::string &user) {
         std::lock_guard lockGuard(m);
-        try{
+        try {
             files.at(file);
             throw FileAlreadyOpened();
-        }catch (std::out_of_range& e){
+        } catch (std::out_of_range &e) {
             files.insert({file, user});
         }
     }

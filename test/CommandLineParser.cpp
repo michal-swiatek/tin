@@ -7,10 +7,8 @@
 #include <regex>
 #include <iostream>
 
-CommandLineParser::CommandLineParser(int argc, char **argv)
-{
-    if (argc < 2)
-    {
+CommandLineParser::CommandLineParser(int argc, char **argv) {
+    if (argc < 2) {
         printHelp();
         exit(0);
     }
@@ -19,28 +17,24 @@ CommandLineParser::CommandLineParser(int argc, char **argv)
         tokens.emplace_back(std::string(argv[i]));
 }
 
-bool CommandLineParser::commandPresent(const std::string &command)
-{
+bool CommandLineParser::commandPresent(const std::string &command) {
     return std::find(tokens.begin(), tokens.end(), command) != tokens.end();
 }
 
-std::string CommandLineParser::getParam(const std::string &command, bool required)
-{
+std::string CommandLineParser::getParam(const std::string &command, bool required) {
     auto it = std::find(tokens.begin(), tokens.end(), command);
 
     if (it != tokens.end() && checkParam(it))
         return *++it;
     else if (!required)
         return "";
-    else
-    {
+    else {
         printHelp();
         exit(0);
     }
 }
 
-bool CommandLineParser::checkParam(std::vector<std::string>::iterator it)
-{
+bool CommandLineParser::checkParam(std::vector<std::string>::iterator it) {
     if (std::next(it) == tokens.end())
         return false;
 
@@ -48,13 +42,13 @@ bool CommandLineParser::checkParam(std::vector<std::string>::iterator it)
     auto param = *++it;
 
     if (command == "-ip")
-        return std::regex_match(param, std::regex(R"((\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b\.){3}\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b)"));
+        return std::regex_match(param, std::regex(
+                R"((\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b\.){3}\b(1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])\b)"));
 
     return true;
 }
 
-void CommandLineParser::printHelp()
-{
+void CommandLineParser::printHelp() {
     std::cout << "Program usage:\n";
     std::cout << "client -ip ipv4_address [commands...]\n\n";
 

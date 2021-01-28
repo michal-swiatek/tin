@@ -9,145 +9,145 @@
 
 int main() {
 
-    std::cout<<"\n Test: opensession_closesession_correctLoginPass()\n";
+    std::cout << "\n Test: opensession_closesession_correctLoginPass()\n";
     opensession_closesession_correctLoginPass();
-    std::cout<<"\n Test: opensession_badLogin()\n";
+    std::cout << "\n Test: opensession_badLogin()\n";
     opensession_badLogin();
-    std::cout<<"\n Test: opensession_badUserName()\n";
+    std::cout << "\n Test: opensession_badUserName()\n";
     opensession_badUserName();
-    std::cout<<"\n Test: opensession_incorrectHost()\n";
+    std::cout << "\n Test: opensession_incorrectHost()\n";
     opensession_incorrectHost();
 
-    std::cout<<"\n Test: closesession_correct()\n";
+    std::cout << "\n Test: closesession_correct()\n";
     closesession_correct();
 
-    std::cout<<"\n Test: open_correctAdmin_O_RDONLY()\n";
+    std::cout << "\n Test: open_correctAdmin_O_RDONLY()\n";
     open_correctAdmin_O_RDONLY();
-    std::cout<<"\n Test: open_correctAdmin_O_WRONLY()\n";
+    std::cout << "\n Test: open_correctAdmin_O_WRONLY()\n";
     open_correctAdmin_O_WRONLY();
-    std::cout<<"\n Test: open_correctAdmin_O_RDWR()\n";
+    std::cout << "\n Test: open_correctAdmin_O_RDWR()\n";
     open_correctAdmin_O_RDWR();
-    std::cout<<"\n Test: open_correctAdmin_O_CREAT()\n";
+    std::cout << "\n Test: open_correctAdmin_O_CREAT()\n";
     open_correctAdmin_O_CREAT();
 
-    std::cout<<"\n Test: open_correctUser_O_RDONLY()\n";
+    std::cout << "\n Test: open_correctUser_O_RDONLY()\n";
     open_correctUser_O_RDONLY();
-    std::cout<<"\n Test: open_correctUser_O_WRONLY()\n";
+    std::cout << "\n Test: open_correctUser_O_WRONLY()\n";
     open_correctUser_O_WRONLY();
-    std::cout<<"\n Test: open_correctUser_O_RDWR()\n";
+    std::cout << "\n Test: open_correctUser_O_RDWR()\n";
     open_correctUser_O_RDWR();
-    std::cout<<"\n Test: open_correctUser_O_CREAT()\n";
+    std::cout << "\n Test: open_correctUser_O_CREAT()\n";
     open_correctUser_O_CREAT();
 
-    std::cout<<"\n Test: open_fileNotExists()\n";
+    std::cout << "\n Test: open_fileNotExists()\n";
     open_fileNotExists();
-    std::cout<<"\n Test: open_fileNotPermited()\n";
+    std::cout << "\n Test: open_fileNotPermited()\n";
     open_fileNotPermited();
 
-    std::cout<<"\n Test: read_correct()\n";
+    std::cout << "\n Test: read_correct()\n";
     read_correct();
-    std::cout<<"\n Test: read_incorrectOpenMode()\n";
+    std::cout << "\n Test: read_incorrectOpenMode()\n";
     read_incorrectOpenMode();
-    std::cout<<"\n Test: read_incorrectDescriptor()\n";
+    std::cout << "\n Test: read_incorrectDescriptor()\n";
     read_incorrectDescriptor();
-    std::cout<<"\n Test: read_emptyFile()\n";
+    std::cout << "\n Test: read_emptyFile()\n";
     read_emptyFile();
 
-    std::cout<<"\n Test: write_correct()\n";
+    std::cout << "\n Test: write_correct()\n";
     write_correct();
-    std::cout<<"\n Test: write_incorrectOpenMode()\n";
+    std::cout << "\n Test: write_incorrectOpenMode()\n";
     write_incorrectOpenMode();
-    std::cout<<"\n Test: write_incorrectDescriptor()\n";
+    std::cout << "\n Test: write_incorrectDescriptor()\n";
     write_incorrectDescriptor();
 
-    std::cout<<"\n Test: lseek_returnToBeginningOfTheFile()\n";
+    std::cout << "\n Test: lseek_returnToBeginningOfTheFile()\n";
     lseek_returnToBeginningOfTheFile();
-    std::cout<<"\n Test: lseek_skipFirstLetterInFile()\n";
+    std::cout << "\n Test: lseek_skipFirstLetterInFile()\n";
     lseek_skipFirstSignInFile();
-    std::cout<<"\n Test: lseek_skipSecondSignInFile()\n";
+    std::cout << "\n Test: lseek_skipSecondSignInFile()\n";
     lseek_skipSecondSignInFile();
-    std::cout<<"\n Test: lseek_incorectDescriptor()\n";
+    std::cout << "\n Test: lseek_incorectDescriptor()\n";
     lseek_incorectDescriptor();
-    std::cout<<"\n Test: lseek_endFile()\n";
+    std::cout << "\n Test: lseek_endFile()\n";
     lseek_endFile();
 
-    std::cout<<"\n Test: close_correct()\n";
+    std::cout << "\n Test: close_correct()\n";
     close_correct();
-    std::cout<<"\n Test: close_incorrectDescriptor()\n";
+    std::cout << "\n Test: close_incorrectDescriptor()\n";
     close_incorrectDescriptor();
-    std::cout<<"\n Test: close_SecondUserTryClose()\n";
+    std::cout << "\n Test: close_SecondUserTryClose()\n";
     close_SecondUserTryClose();
 
-    std::cout<<"\n Test: unlink_noPermissionToFile()\n";
+    std::cout << "\n Test: unlink_noPermissionToFile()\n";
     unlink_noPermissionToFile();
-    std::cout<<"\n Test: unlink_fileNotExists()\n";
+    std::cout << "\n Test: unlink_fileNotExists()\n";
     unlink_fileNotExists();
-    std::cout<<"\n Test: unlink_otherUserHadOpenFile()\n";
+    std::cout << "\n Test: unlink_otherUserHadOpenFile()\n";
     unlink_otherUserHadOpenFile();
 
-    std::cout<<"\n Test: fstat_correct()\n";
+    std::cout << "\n Test: fstat_correct()\n";
     fstat_correct();
-    std::cout<<"\n Test: fstat_incorrectDescriptor()\n";
+    std::cout << "\n Test: fstat_incorrectDescriptor()\n";
     fstat_incorrectDescriptor();
 
-    std::cout<<"\n Test: opendir_correct()\n";
+    std::cout << "\n Test: opendir_correct()\n";
     opendir_correct();
-    std::cout<<"\n Test: opendir_secondUserTry()\n";
+    std::cout << "\n Test: opendir_secondUserTry()\n";
     opendir_secondUserTry();
-    std::cout<<"\n Test: opendir_pathNotExists()\n";
+    std::cout << "\n Test: opendir_pathNotExists()\n";
     opendir_pathNotExists();
 
-    std::cout<<"\n Test: readdir_correct()\n";
+    std::cout << "\n Test: readdir_correct()\n";
     readdir_correct();
-    std::cout<<"\n Test: readdir_incorrectDescriptor()\n";
+    std::cout << "\n Test: readdir_incorrectDescriptor()\n";
     readdir_incorrectDescriptor();
-    std::cout<<"\n Test: readdit_twoUsers()\n";
+    std::cout << "\n Test: readdit_twoUsers()\n";
     readdit_twoUsers();
-    std::cout<<"\n Test: readdir_correctReadMultipleTimes()\n";
+    std::cout << "\n Test: readdir_correctReadMultipleTimes()\n";
     readdir_correctReadMultipleTimes();
 
-    std::cout<<"\n Test: closedir_correct()\n";
+    std::cout << "\n Test: closedir_correct()\n";
     closedir_correct();
-    std::cout<<"\n Test: closedir_incorrectDescriptor()\n";
+    std::cout << "\n Test: closedir_incorrectDescriptor()\n";
     closedir_incorrectDescriptor();
 
-    std::cout<<"\n Test: user_createWriteReadCloseUnlinkfile_andTryToRead()\n";
+    std::cout << "\n Test: user_createWriteReadCloseUnlinkfile_andTryToRead()\n";
     user_createWriteReadCloseUnlinkfile_andTryToRead();
 
-    std::cout<<"\n Test: open_twice()\n";
+    std::cout << "\n Test: open_twice()\n";
     open_twice();
 
-    std::cout<<"\n Test: close_someone_elses_file()\n";
+    std::cout << "\n Test: close_someone_elses_file()\n";
     close_someone_elses_file();
 
-    std::cout<<"\n Test: delete_opened_file()\n";
+    std::cout << "\n Test: delete_opened_file()\n";
     delete_opened_file();
 
-    std::cout<<"\n Test: open_someone_elses_file()\n";
+    std::cout << "\n Test: open_someone_elses_file()\n";
     open_someone_elses_file();
 
-    std::cout<<"\n Test: read_opened_file()\n";
+    std::cout << "\n Test: read_opened_file()\n";
     read_opened_file();
 
-    std::cout<<"\n Test: write_to_opened_file()\n";
+    std::cout << "\n Test: write_to_opened_file()\n";
     write_to_opened_file();
 
-    std::cout<<"\n Test: several_create_and_write()\n";
+    std::cout << "\n Test: several_create_and_write()\n";
     several_create_and_write();
 
-    std::cout<<"\n Test: reading_dir_during_changes()\n";
+    std::cout << "\n Test: reading_dir_during_changes()\n";
     reading_dir_during_changes();
 
-    std::cout<<"\n Test: closing_opened_directory()\n";
+    std::cout << "\n Test: closing_opened_directory()\n";
     closing_opened_directory();
 
-    std::cout<<"\n Test: lseek_on_opened_file()\n";
+    std::cout << "\n Test: lseek_on_opened_file()\n";
     lseek_on_opened_file();
 
-    std::cout<<"\n Test: delete_deleted_file()\n";
+    std::cout << "\n Test: delete_deleted_file()\n";
     delete_deleted_file();
 
-    std::cout<<"\n Test: several_users_opening_dir()\n";
+    std::cout << "\n Test: several_users_opening_dir()\n";
     several_users_opening_dir();
 
     return 0;

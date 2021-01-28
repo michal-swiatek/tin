@@ -8,13 +8,13 @@
 #include <vector>
 #include <string>
 
-class CommandLineParser
-{
+class CommandLineParser {
 public:
-    CommandLineParser(int argc, char** argv);
+    CommandLineParser(int argc, char **argv);
 
-    bool commandPresent(const std::string& command);
-    std::string getParam(const std::string& command, bool required = false);
+    bool commandPresent(const std::string &command);
+
+    std::string getParam(const std::string &command, bool required = false);
 
     static void printHelp();
 

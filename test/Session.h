@@ -11,24 +11,24 @@
 
 #include "../client/NFSClient.h"
 
-class Session
-{
+class Session {
 public:
-    explicit Session(NFSClient* client);
+    explicit Session(NFSClient *client);
 
     void start();
 
-    void executeCommand(const std::vector<std::string>& tokens);
+    void executeCommand(const std::vector<std::string> &tokens);
 
-    std::vector<std::string> parseLine(const std::string& line);
+    std::vector<std::string> parseLine(const std::string &line);
 
 private:
-    int download(const std::string& serverSrc, const std::string& localDest);
-    int upload(const std::string& localSrc, const std::string& serverDest);
+    int download(const std::string &serverSrc, const std::string &localDest);
+
+    int upload(const std::string &localSrc, const std::string &serverDest);
 
     static void printHelp();
 
-    NFSClient* client = nullptr;
+    NFSClient *client = nullptr;
 
     std::set<int> fileDescriptors;
     std::set<int> directoryDescriptors;

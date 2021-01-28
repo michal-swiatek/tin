@@ -9,9 +9,9 @@ class DirectoriesMonitor {
 public:
     void add(const std::string &directory, const std::string &user) {
         std::lock_guard lockGuard(m);
-        if(directories.find(std::make_pair(directory, user)) == directories.end()){
+        if (directories.find(std::make_pair(directory, user)) == directories.end()) {
             directories.insert(std::make_pair(directory, user));
-        }else{
+        } else {
             throw DirectoryAlreadyOpened();
         }
     }
