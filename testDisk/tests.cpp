@@ -2,10 +2,9 @@
 // Created by root on 24.01.2021.
 //
 
-#include "clientTests.h"
-#include "../client/Client.h"
+#include "tests.h"
+#include "../client/NFSClient.h"
 #include <iostream>
-#include <unistd.h>
 #include <unistd.h>
 
 
@@ -14,7 +13,7 @@ void opensession_closesession_correctLoginPass(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     returnedValue = client->mynfs_opensession(host, login, password);
@@ -32,7 +31,7 @@ void opensession_incorrectHost(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
     int returnedValue = 0;
     returnedValue = client->mynfs_opensession(host, login, password);
 
@@ -45,7 +44,7 @@ void opensession_badLogin(){
     char* login = "user1";
     char* password = "pass";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
     int returnedValue = 0;
     returnedValue = client->mynfs_opensession(host, login, password);
 
@@ -58,7 +57,7 @@ void opensession_badUserName(){
     char* login = "user";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     returnedValue = client->mynfs_opensession(host, login, password);
@@ -74,7 +73,7 @@ void closesession_correct(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
@@ -91,12 +90,12 @@ void open_correctAdmin_O_RDONLY(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/2.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/2.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -108,12 +107,12 @@ void open_correctAdmin_O_WRONLY(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/2.txt", Client::O_WO);
+    returnedValue = client->mynfs_open("/2.txt", NFSClient::O_WO);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -125,12 +124,12 @@ void open_correctAdmin_O_RDWR(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/2.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/2.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -142,12 +141,12 @@ void open_correctAdmin_O_CREAT(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/admin_new.txt", Client::O_CR);
+    returnedValue = client->mynfs_open("/admin_new.txt", NFSClient::O_CR);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -162,12 +161,12 @@ void open_correctUser_O_RDONLY(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -179,12 +178,12 @@ void open_correctUser_O_WRONLY(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_CR);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_CR);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -196,12 +195,12 @@ void open_correctUser_O_RDWR(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -214,12 +213,12 @@ void open_correctUser_O_CREAT(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/user_new.txt", Client::O_CR);
+    returnedValue = client->mynfs_open("/user_new.txt", NFSClient::O_CR);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -236,12 +235,12 @@ void open_fileNotExists(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/nazwaaaakjhd.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/nazwaaaakjhd.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -253,12 +252,12 @@ void open_fileNotPermited(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/2.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/2.txt", NFSClient::O_RW);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -272,14 +271,14 @@ void read_correct(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[3];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -297,14 +296,14 @@ void read_incorrectOpenMode(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[3];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_WO);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_WO);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -322,14 +321,14 @@ void read_incorrectDescriptor(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[3];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -350,14 +349,14 @@ void read_emptyFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[3];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/pusty.txt", Client::O_CR);
+    returnedValue = client->mynfs_open("/pusty.txt", NFSClient::O_CR);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -378,13 +377,13 @@ void write_correct(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -404,13 +403,13 @@ void write_incorrectOpenMode(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RO);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RO);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -432,13 +431,13 @@ void write_incorrectDescriptor(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -459,14 +458,14 @@ void lseek_returnToBeginningOfTheFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[1];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -476,7 +475,7 @@ void lseek_returnToBeginningOfTheFile(){
     std::cout<<"Read text:"<<answer<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_lseek(descriptor, 0, Client::S_SET);
+    returnedValue = client->mynfs_lseek(descriptor, 0, NFSClient::S_SET);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -494,19 +493,19 @@ void lseek_skipFirstSignInFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[1];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_lseek(descriptor, 1, Client::S_SET);
+    returnedValue = client->mynfs_lseek(descriptor, 1, NFSClient::S_SET);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -523,14 +522,14 @@ void lseek_skipSecondSignInFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[1];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -540,7 +539,7 @@ void lseek_skipSecondSignInFile(){
     std::cout<<"Read text:"<<answer<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_lseek(descriptor, 1, Client::S_CUR);
+    returnedValue = client->mynfs_lseek(descriptor, 1, NFSClient::S_CUR);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -558,19 +557,19 @@ void lseek_incorectDescriptor(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
 
-    returnedValue = client->mynfs_lseek(-8, 0, Client::S_SET);
+    returnedValue = client->mynfs_lseek(-8, 0, NFSClient::S_SET);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -583,19 +582,19 @@ void lseek_endFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     char answer[1];
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_lseek(descriptor, 1, Client::S_END);
+    returnedValue = client->mynfs_lseek(descriptor, 1, NFSClient::S_END);
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -615,13 +614,13 @@ void close_correct(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -639,7 +638,7 @@ void close_incorrectDescriptor(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
@@ -656,13 +655,13 @@ void close_SecondUserTryClose(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -671,7 +670,7 @@ void close_SecondUserTryClose(){
     char* login2 = "user1";
     char* password2 = "pass1";
 
-    auto * client2 = new Client();
+    auto * client2 = new NFSClient();
 
     client2->mynfs_opensession(host2, login2, password2);
     std::cout<<"Client2 opensession: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
@@ -689,7 +688,7 @@ void unlink_noPermissionToFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
@@ -706,7 +705,7 @@ void unlink_fileNotExists(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     client->mynfs_opensession(host, login, password);
@@ -723,13 +722,13 @@ void unlink_otherUserHadOpenFile(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -738,7 +737,7 @@ void unlink_otherUserHadOpenFile(){
     char* login2 = "user1";
     char* password2 = "pass1";
 
-    auto * clientAdmin = new Client();
+    auto * clientAdmin = new NFSClient();
 
     clientAdmin->mynfs_opensession(host2, login2, password2);
     std::cout<<"Client2 opensession: "<<mynfs_strerror(clientAdmin->mynfs_error)<<'\n';
@@ -758,14 +757,14 @@ void fstat_correct(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
     FileStat *buf = new FileStat();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
-    returnedValue = client->mynfs_open("/1.txt", Client::O_RW);
+    returnedValue = client->mynfs_open("/1.txt", NFSClient::O_RW);
     descriptor = returnedValue;
     std::cout<<"Open file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -789,7 +788,7 @@ void fstat_incorrectDescriptor(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
     FileStat *buf = new FileStat();
 
     int returnedValue = 0;
@@ -806,7 +805,7 @@ void opendir_correct(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -825,7 +824,7 @@ void opendir_secondUserTry(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -839,7 +838,7 @@ void opendir_secondUserTry(){
     char* login2 = "user1";
     char* password2 = "pass1";
 
-    auto * clientAdmin = new Client();
+    auto * clientAdmin = new NFSClient();
 
     clientAdmin->mynfs_opensession(host2, login2, password2);
 
@@ -857,7 +856,7 @@ void opendir_pathNotExists(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -877,7 +876,7 @@ void readdir_correct(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -900,7 +899,7 @@ void readdir_incorrectDescriptor(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -918,7 +917,7 @@ void readdit_twoUsers(){
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
     char *buf;
 
     int returnedValue = 0;
@@ -934,7 +933,7 @@ void readdit_twoUsers(){
     char* login2 = "user1";
     char* password2 = "pass1";
 
-    auto * clientAdmin = new Client();
+    auto * clientAdmin = new NFSClient();
 
     clientAdmin->mynfs_opensession(host2, login2, password2);
 
@@ -959,7 +958,7 @@ void readdir_correctReadMultipleTimes(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -986,7 +985,7 @@ void closedir_correct(){
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -1002,13 +1001,13 @@ void closedir_correct(){
 
     client->mynfs_closesession();
 }
-//próba zamknięcia katalogu z podaniem błędnego deskryptora
+
 void closedir_incorrectDescriptor(){
     char* host = "0.0.0.0";
     char* login = "user1";
     char* password = "pass1";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
@@ -1022,20 +1021,20 @@ void closedir_incorrectDescriptor(){
 }
 
 /*********************************************************************************************************************/
-//stworz nowy plik i wpisz cos do niego, odczytaj co tam wpisales, zamknij, usun i proboj odczytac ponownie i ma byc bład ze juz nie ma pliku
+
 void user_createWriteReadCloseUnlinkfile_andTryToRead(){
     char* host = "0.0.0.0";
     char* login = "user2";
     char* password = "pass2";
 
-    auto * client = new Client();
+    auto * client = new NFSClient();
 
     int returnedValue = 0;
     int descriptor;
     client->mynfs_opensession(host, login, password);
 
 
-    returnedValue = client->mynfs_open("/user_new.txt", Client::O_CR);
+    returnedValue = client->mynfs_open("/user_new.txt", NFSClient::O_CR);
     descriptor = returnedValue;
     std::cout<<"Open and create file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
@@ -1046,7 +1045,7 @@ void user_createWriteReadCloseUnlinkfile_andTryToRead(){
     std::cout<<"Written text: "<<buf<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_lseek(descriptor,0, Client::S_SET);
+    returnedValue = client->mynfs_lseek(descriptor, 0, NFSClient::S_SET);
     std::cout<<"Lseek to beginning of the file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
@@ -1063,10 +1062,464 @@ void user_createWriteReadCloseUnlinkfile_andTryToRead(){
     std::cout<<"Unlink created file: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
-    returnedValue = client->mynfs_open("/user_new.txt", Client::O_RO);
+    returnedValue = client->mynfs_open("/user_new.txt", NFSClient::O_RO);
     std::cout<<"Open file again: "<<mynfs_strerror(client->mynfs_error)<<'\n';
     std::cout<<"Function returned value: "<<returnedValue<<'\n';
 
     client->mynfs_closesession();
 }
 
+void open_twice(){
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/1.txt", NFSClient::O_RO);
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client2->mynfs_open("/1.txt", NFSClient::O_RO);
+    std::cout<<"Open file second time: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void close_someone_elses_file(){
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    int descriptor;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/1.txt", NFSClient::O_RO);
+    descriptor = returnedValue;
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    returnedValue = client2->mynfs_close(descriptor);
+    std::cout<<"Close file opened by other user: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void delete_opened_file(){
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/1.txt", NFSClient::O_RW);
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    returnedValue = client2->mynfs_unlink("/1.txt");
+    std::cout<<"Delete file opened by other user: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void open_someone_elses_file(){
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    int descriptor;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/new_fileee.txt", NFSClient::O_CR);
+    descriptor = returnedValue;
+    std::cout<<"Create file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client1->mynfs_close(descriptor);
+    std::cout<<"Close file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    returnedValue = client2->mynfs_open("/new_fileee.txt", NFSClient::O_RO);
+    std::cout<<"Open not your file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client1->mynfs_unlink("/new_fileee.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void read_opened_file(){
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    int descriptor;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/new_file.txt", NFSClient::O_CR);
+    descriptor = returnedValue;
+    std::cout<<"Create file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+
+    auto * client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    char text[3];
+
+    returnedValue = client2->mynfs_read(descriptor, text, 3);
+    std::cout<<"Read from file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Read text:"<<text<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client1->mynfs_unlink("/new_file.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void write_to_opened_file() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+
+    auto* client1 = new NFSClient();
+
+    int returnedValue;
+    int descriptor;
+    client1->mynfs_opensession(host1, login1, password1);
+
+    returnedValue = client1->mynfs_open("/1.txt", NFSClient::O_RW);
+    descriptor = returnedValue;
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+
+    auto * client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    char text[5] = "text";
+
+    returnedValue = client2->mynfs_write(descriptor, text, 5);
+    std::cout<<"Write to file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void several_create_and_write() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    char* host3 = "0.0.0.0";
+    char* login3 = "user3";
+    char* password3 = "pass3";
+    auto* client3 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+    client2->mynfs_opensession(host2, login2, password2);
+    client3->mynfs_opensession(host3, login3, password3);
+
+    int returnedValue;
+    int descriptor1, descriptor2, descriptor3;
+    char text[5] = "text";
+
+    returnedValue = client1->mynfs_open("/new_file1.txt", NFSClient::O_CR);
+    descriptor1 = returnedValue;
+    std::cout<<"Create file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client2->mynfs_open("/new_file2.txt", NFSClient::O_CR);
+    descriptor2 = returnedValue;
+    std::cout<<"Create file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client3->mynfs_open("/new_file3.txt", NFSClient::O_CR);
+    descriptor3 = returnedValue;
+    std::cout<<"Create file: "<<mynfs_strerror(client3->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+
+    returnedValue = client1->mynfs_write(descriptor1, text, 5);
+    std::cout<<"Write to file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client2->mynfs_write(descriptor2, text, 5);
+    std::cout<<"Write to file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client3->mynfs_write(descriptor3, text, 5);
+    std::cout<<"Write to file: "<<mynfs_strerror(client3->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+
+    returnedValue = client1->mynfs_unlink("/new_file1.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client2->mynfs_unlink("/new_file2.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client3->mynfs_unlink("/new_file3.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client3->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+    client3->mynfs_closesession();
+}
+
+void reading_dir_during_changes() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+
+    int returnedValue;
+    int descriptor;
+    char *buf;
+
+    returnedValue = client1->mynfs_opendir("/");
+    std::cout<<"Open dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+    descriptor = returnedValue;
+    buf = client1->mynfs_readdir(descriptor);
+    std::cout<<"Read dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<buf<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    returnedValue = client2->mynfs_open("/test.txt", NFSClient::O_CR);
+    std::cout<<"Create file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    buf = client1->mynfs_readdir(descriptor);
+    std::cout<<"Read dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<buf<<'\n';
+
+    returnedValue = client2->mynfs_unlink("/test.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void closing_opened_directory() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+
+    int returnedValue;
+    int descriptor;
+    char *buf;
+
+    returnedValue = client1->mynfs_opendir("/second");
+    std::cout<<"Open dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+    descriptor = returnedValue;
+    buf = client1->mynfs_readdir(descriptor);
+    std::cout<<"Read dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<buf<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    client2->mynfs_closedir(descriptor);
+    std::cout<<"Close dir: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void lseek_on_opened_file() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+
+    int returnedValue, descriptor;
+
+    returnedValue = client1->mynfs_open("/1.txt", NFSClient::O_RW);
+    descriptor = returnedValue;
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    client2->mynfs_lseek(descriptor, 3, NFSClient::S_CUR);
+    std::cout<<"Lseek: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void delete_deleted_file() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    int returnedValue, descriptor;
+
+    returnedValue = client1->mynfs_open("/delete.txt", NFSClient::O_CR);
+    descriptor = returnedValue;
+    std::cout<<"Open file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client1->mynfs_unlink("/delete.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client2->mynfs_unlink("/delete.txt");
+    std::cout<<"Delete file: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+}
+
+void several_users_opening_dir() {
+    char* host1 = "0.0.0.0";
+    char* login1 = "user1";
+    char* password1 = "pass1";
+    auto* client1 = new NFSClient();
+
+    client1->mynfs_opensession(host1, login1, password1);
+
+    char* host2 = "0.0.0.0";
+    char* login2 = "user2";
+    char* password2 = "pass2";
+    auto* client2 = new NFSClient();
+
+    client2->mynfs_opensession(host2, login2, password2);
+
+    char* host3 = "0.0.0.0";
+    char* login3 = "user3";
+    char* password3 = "pass3";
+    auto* client3 = new NFSClient();
+
+    client3->mynfs_opensession(host3, login3, password3);
+
+    int returnedValue;
+
+    returnedValue = client1->mynfs_opendir("/second");
+    std::cout<<"Open dir: "<<mynfs_strerror(client1->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client2->mynfs_opendir("/second");
+    std::cout<<"Open dir: "<<mynfs_strerror(client2->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    returnedValue = client3->mynfs_opendir("/second");
+    std::cout<<"Open dir: "<<mynfs_strerror(client3->mynfs_error)<<'\n';
+    std::cout<<"Function returned value: "<<returnedValue<<'\n';
+
+    client1->mynfs_closesession();
+    client2->mynfs_closesession();
+    client3->mynfs_closesession();
+}

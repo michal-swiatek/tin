@@ -1,4 +1,4 @@
-#include "Client.h"
+#include "NFSClient.h"
 
 #include <arpa/inet.h>
 #include <iostream>
@@ -6,14 +6,14 @@
 #include <string>
 #include <unistd.h>
 
-Client::Client() {
+NFSClient::NFSClient() {
     sockfd=-1;
     mynfs_error = NO_ERROR;
 }
 
-Client::~Client()= default;
+NFSClient::~NFSClient()= default;
 
-int Client::mynfs_opensession(const char *host, const char *login, const char *passwd){
+int NFSClient::mynfs_opensession(const char *host, const char *login, const char *passwd){
 
     struct sockaddr_in serv_addr{};
 
@@ -28,7 +28,7 @@ int Client::mynfs_opensession(const char *host, const char *login, const char *p
     serv_addr.sin_port = htons(DEFAULT_PORT);
 
     if(inet_pton(AF_INET, host, &serv_addr.sin_addr)<=0) {
-        this->mynfs_error = COULD_NOT_CREATE_SOCKET;
+        this->mynfs_error = INET_PTON_ERROR;
         return -1;
     }
 
@@ -97,7 +97,7 @@ int Client::mynfs_opensession(const char *host, const char *login, const char *p
     }
 }
 
-int Client::mynfs_closesession(){
+int NFSClient::mynfs_closesession(){
     Header header{};
     header.command = C_DISCONNECT;
     header.param1 = 0;
@@ -137,7 +137,7 @@ int Client::mynfs_closesession(){
     }
 }
 
-int Client::mynfs_open(char* path, FileFlag oflag ){
+int NFSClient::mynfs_open(char* path, FileFlag oflag ){
 
     std::string filePath(path);
 
@@ -186,7 +186,7 @@ int Client::mynfs_open(char* path, FileFlag oflag ){
     }
 }
 
-int Client:: mynfs_read(int fd, char *buf, int size){
+int NFSClient:: mynfs_read(int fd, char *buf, int size){
     Header header{};
     header.command = C_READ_FILE;
     header.param1 = size;
@@ -233,7 +233,7 @@ int Client:: mynfs_read(int fd, char *buf, int size){
 
 
 
-int Client::mynfs_write(int fd, const char *buf, int size) {
+int NFSClient::mynfs_write(int fd, const char *buf, int size) {
     Header header{};
     header.command = C_WRITE_FILE;
     header.param1 = size;
@@ -276,7 +276,7 @@ int Client::mynfs_write(int fd, const char *buf, int size) {
     }
 }
 
-int Client::mynfs_lseek(int fd, int offset, Whence whence) {
+int NFSClient::mynfs_lseek(int fd, int offset, Whence whence) {
     Header header{};
     header.command = C_FILE_LSEEK;
     header.param1 = offset;
@@ -318,7 +318,7 @@ int Client::mynfs_lseek(int fd, int offset, Whence whence) {
     }
 }
 
-int Client::mynfs_close(int fd) {
+int NFSClient::mynfs_close(int fd) {
     Header header{};
     header.command = C_CLOSE_FILE;
     header.param1 = fd;
@@ -361,7 +361,7 @@ int Client::mynfs_close(int fd) {
     }
 }
 
-int Client::mynfs_unlink(char* path){
+int NFSClient::mynfs_unlink(char* path){
     std::string filePath(path);
 
     Header header{};
@@ -409,7 +409,7 @@ int Client::mynfs_unlink(char* path){
     }
 }
 
-int Client::mynfs_fstat(int fd, FileStat *buf) {
+int NFSClient::mynfs_fstat(int fd, FileStat *buf) {
     Header header{};
     header.command = C_FILE_STAT;
     header.param1 = fd;
@@ -453,7 +453,7 @@ int Client::mynfs_fstat(int fd, FileStat *buf) {
     }
 }
 
-int Client::mynfs_opendir( char *path){
+int NFSClient::mynfs_opendir(char *path){
     std::string dirPath(path);
 
     Header header{};
@@ -501,7 +501,7 @@ int Client::mynfs_opendir( char *path){
     }
 }
 
-char *Client::mynfs_readdir(int dir_fd){
+char *NFSClient::mynfs_readdir(int dir_fd){
     Header header{};
     header.command = C_READ_DIR;
     header.param1 = dir_fd;
@@ -549,7 +549,7 @@ char *Client::mynfs_readdir(int dir_fd){
     }
 }
 
-int Client::mynfs_closedir(int dir_fd){
+int NFSClient::mynfs_closedir(int dir_fd){
     Header header{};
     header.command = C_CLOSE_DIR;
     header.param1 = dir_fd;
@@ -591,7 +591,7 @@ int Client::mynfs_closedir(int dir_fd){
     }
 }
 
-void Client::sendMessage(Header& header, std::vector<char> &data) const {
+void NFSClient::sendMessage(Header& header, std::vector<char> &data) const {
     char buffer[1024];
 
     int bytesSent;
@@ -653,7 +653,7 @@ void Client::sendMessage(Header& header, std::vector<char> &data) const {
     }
 }
 
-void Client::readMessage(Header &header, std::vector<char> &data) const {
+void NFSClient::readMessage(Header &header, std::vector<char> &data) const {
     data.clear();
     memset(&header, 0, sizeof(Header));
 

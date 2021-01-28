@@ -1,5 +1,5 @@
-#ifndef TIN_CLIENT_H
-#define TIN_CLIENT_H
+#ifndef TIN_NFSCLIENT_H
+#define TIN_NFSCLIENT_H
 
 #include "../utilities/Protocol.h"
 #include "../utilities/Requests.h"
@@ -12,7 +12,7 @@
 
 const char *mynfs_strerror(Errors error);
 
-class Client {
+class NFSClient {
 private:
     int sockfd;
     void sendMessage( Header& header, std::vector<char>& data ) const;
@@ -32,8 +32,8 @@ public:
         S_END = SEEK_END
     };
 
-    Client();
-    ~Client();
+    NFSClient();
+    ~NFSClient();
     int mynfs_open(char* path, FileFlag oflag );
 
     int mynfs_read(int fd, char *buf, int size);
@@ -53,4 +53,4 @@ public:
     Errors mynfs_error;
 };
 
-#endif //TIN_CLIENT_H
+#endif //TIN_NFSCLIENT_H

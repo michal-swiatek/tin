@@ -12,8 +12,9 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
-Session::Session(Client *client) : client(client) {}
+Session::Session(NFSClient *client) : client(client) {}
 
 void Session::start()
 {
@@ -88,7 +89,7 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
             if (flag == -1)
                 std::cout << "Invalid flag\n";
             else {
-                ret = client->mynfs_open(const_cast<char *>(tokens[1].c_str()), static_cast<Client::FileFlag>(flag));
+                ret = client->mynfs_open(const_cast<char *>(tokens[1].c_str()), static_cast<NFSClient::FileFlag>(flag));
 
                 if (ret != -1) {
                     fileDescriptors.insert(ret);
@@ -168,7 +169,7 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
                     fd = std::stoi(tokens[1]);
                     offset = tokens[2].size();
 
-                    ret = client->mynfs_lseek(fd, offset, static_cast<Client::Whence>(whence));
+                    ret = client->mynfs_lseek(fd, offset, static_cast<NFSClient::Whence>(whence));
                 }
                 catch (std::invalid_argument &e) {
                     std::cout << "Invalid argument: " << e.what() << '\n';
@@ -303,7 +304,7 @@ void Session::executeCommand(const std::vector<std::string> &tokens)
 
 int Session::download(const std::string &serverSrc, const std::string &localDest)
 {
-    int fd = client->mynfs_open(const_cast<char *>(serverSrc.c_str()), Client::O_RO);
+    int fd = client->mynfs_open(const_cast<char *>(serverSrc.c_str()), NFSClient::O_RO);
 
     if (fd != -1)
     {
@@ -337,7 +338,7 @@ int Session::download(const std::string &serverSrc, const std::string &localDest
 
 int Session::upload(const std::string &localSrc, const std::string &serverDest)
 {
-    int fd = client->mynfs_open(const_cast<char *>(serverDest.c_str()), Client::O_CR);
+    int fd = client->mynfs_open(const_cast<char *>(serverDest.c_str()), NFSClient::O_CR);
 
     if (fd != -1)
     {

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../client/Client.h"
+#include "../client/NFSClient.h"
 
 #include "CommandLineParser.h"
 #include "Session.h"
@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     CommandLineParser parser(argc, argv);
 
     auto host = parser.getParam("-ip", true);
-    auto client = new Client();
+    auto client = new NFSClient();
     auto session = Session(client);
 
     if (parser.commandPresent("-session"))

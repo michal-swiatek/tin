@@ -2,8 +2,8 @@
 // Created by root on 24.01.2021.
 //
 
-#ifndef TIN_CLIENTTESTS_H
-#define TIN_CLIENTTESTS_H
+#ifndef TIN_TESTS_H
+#define TIN_TESTS_H
 
 
 /*********************************************************************************************************************/
@@ -102,7 +102,6 @@ void open_fileNotPermited();
 //returned value: liczba przeczytanych znaków (3)
 void read_correct();
 
-//TODO: ustawia tutaj błąd na OTHER_ERROR
 //próba przeczytani z pliku nie otwartego w trybie do odczytu
 //mynfs_sterror:
 //returned value: -1
@@ -208,6 +207,31 @@ void closedir_correct();
 //próba zamknięcia katalogu z podaniem błędnego deskryptora
 void closedir_incorrectDescriptor();
 /*********************************************************************************************************************/
-//stworz nowy plik i wpisz cos do niego, odczytaj co tam wpisales, zamknij, usun i proboj odczytac ponownie i ma byc bład ze juz nie ma pliku
+//stworzenie nowego pliku, wpisanie do niego, odczytanie z pliku, zamknięcie, usunięcie i nieudana próba odczytu ponownego
 void user_createWriteReadCloseUnlinkfile_andTryToRead();
-#endif //TIN_CLIENTTESTS_H
+/*********************************************************************************************************************/
+// Jeden użytkownik (dwóch o tych samym loginie i haśle) chce otworzyć dwa razy ten sam plik.
+void open_twice();
+// Użytkownik chce zamknąć plik otwarty przez innego użytkownika.
+void close_someone_elses_file();
+// Użytkownik chce usunąć plik otwarty przez innego użytkownika.
+void delete_opened_file();
+// Użytkownik próbuje otworzyć plik utworzony przez innego użytkownika.
+void open_someone_elses_file();
+// Uzytkownik próbuje czytać z pliku otwartego przez innego użytkownika.
+void read_opened_file();
+// Uzytkownik próbuje pisać do pliku otwartego przez innego użytkownika.
+void write_to_opened_file();
+// Kilku użytkowników na raz tworzy pliki i pisze do nich.
+void several_create_and_write();
+// Jeden użytkownik czyta katalog, a drugi w tym czasie tworzy w nim nowy plik.
+void reading_dir_during_changes();
+// Użytkownik próbuje zamknąć otwarty przez innego użytkownika katalog.
+void closing_opened_directory();
+// Użytkownik próbuje wykonać lseek na pliku otwartym przez innego użytkownika.
+void lseek_on_opened_file();
+// Użytkownik próbuje usunąć plik, który wcześniej został usunięty przez innego użytkownika.
+void delete_deleted_file();
+// Kilku klientów jednocześnie otwiera ten sam katalog.
+void several_users_opening_dir();
+#endif //TIN_TESTS_H

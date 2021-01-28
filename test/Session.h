@@ -9,12 +9,12 @@
 #include <vector>
 #include <string>
 
-#include "../client/Client.h"
+#include "../client/NFSClient.h"
 
 class Session
 {
 public:
-    explicit Session(Client* client);
+    explicit Session(NFSClient* client);
 
     void start();
 
@@ -28,7 +28,7 @@ private:
 
     static void printHelp();
 
-    Client* client = nullptr;
+    NFSClient* client = nullptr;
 
     std::set<int> fileDescriptors;
     std::set<int> directoryDescriptors;

@@ -5,9 +5,7 @@
 #include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
-#include "../client/Client.h"
-#include <unistd.h>
-#include "clientTests.h"
+#include "tests.h"
 
 int main() {
 
@@ -115,6 +113,42 @@ int main() {
 
     std::cout<<"\n Test: user_createWriteReadCloseUnlinkfile_andTryToRead()\n";
     user_createWriteReadCloseUnlinkfile_andTryToRead();
+
+    std::cout<<"\n Test: open_twice()\n";
+    open_twice();
+
+    std::cout<<"\n Test: close_someone_elses_file()\n";
+    close_someone_elses_file();
+
+    std::cout<<"\n Test: delete_opened_file()\n";
+    delete_opened_file();
+
+    std::cout<<"\n Test: open_someone_elses_file()\n";
+    open_someone_elses_file();
+
+    std::cout<<"\n Test: read_opened_file()\n";
+    read_opened_file();
+
+    std::cout<<"\n Test: write_to_opened_file()\n";
+    write_to_opened_file();
+
+    std::cout<<"\n Test: several_create_and_write()\n";
+    several_create_and_write();
+
+    std::cout<<"\n Test: reading_dir_during_changes()\n";
+    reading_dir_during_changes();
+
+    std::cout<<"\n Test: closing_opened_directory()\n";
+    closing_opened_directory();
+
+    std::cout<<"\n Test: lseek_on_opened_file()\n";
+    lseek_on_opened_file();
+
+    std::cout<<"\n Test: delete_deleted_file()\n";
+    delete_deleted_file();
+
+    std::cout<<"\n Test: several_users_opening_dir()\n";
+    several_users_opening_dir();
 
     return 0;
 }
