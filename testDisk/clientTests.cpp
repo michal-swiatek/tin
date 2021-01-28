@@ -2,7 +2,7 @@
 // Created by root on 24.01.2021.
 //
 
-#include "tests.h"
+#include "clientTests.h"
 #include "../client/Client.h"
 #include <iostream>
 #include <unistd.h>

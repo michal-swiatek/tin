@@ -2,8 +2,8 @@
 // Created by root on 24.01.2021.
 //
 
-#ifndef TIN_TESTS_H
-#define TIN_TESTS_H
+#ifndef TIN_CLIENTTESTS_H
+#define TIN_CLIENTTESTS_H
 
 
 /*********************************************************************************************************************/
@@ -210,4 +210,4 @@ void closedir_incorrectDescriptor();
 /*********************************************************************************************************************/
 //stworz nowy plik i wpisz cos do niego, odczytaj co tam wpisales, zamknij, usun i proboj odczytac ponownie i ma byc bład ze juz nie ma pliku
 void user_createWriteReadCloseUnlinkfile_andTryToRead();
-#endif //TIN_TESTS_H
+#endif //TIN_CLIENTTESTS_H

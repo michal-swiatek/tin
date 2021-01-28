@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include "../client/Client.h"
 #include <unistd.h>
-#include "tests.h"
+#include "clientTests.h"
 
 int main() {
 
